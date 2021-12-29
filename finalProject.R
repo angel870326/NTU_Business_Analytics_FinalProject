@@ -11,6 +11,8 @@ all_merge <- readRDS("all_merge.rds")
 coffee <- subset(all_merge, (all_merge$special_type=="normal"))
 pairs(all_merge[,c(10,8,9,11,19,21,22)], pch=19, cex=0.5)
 
+# subset
+coffee <-  subset(all_merge, (all_merge$special_type=="normal"), select = -c(datetime_UTC_8,deviceid,invo_idx,id) )
 
 
 
