@@ -5,7 +5,7 @@ setwd("自己打 working directory")
 # library(dplyr)
 # all_merge <- distinct(all_merge)
 # all_merge <- subset(all_merge, select = -c(2,3,5,6) )
-all_merge <- subset(all_merge, select = -c(3,8) )
+# all_merge <- subset(all_merge, select = -c(3,8) )
 # saveRDS(all_merge, file = "all_merge.rds")
 
 all_merge <- readRDS("all_merge.rds")
