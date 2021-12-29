@@ -12,6 +12,19 @@ coffee <- subset(all_merge, (all_merge$special_type=="normal"))
 
 pairs(coffee[,c(6,4,5,7,15,17,18)], pch=19, cex=0.5)
 
+# name、county_district 拿掉
+lm1 <- lm(totprice ~ area_type + channel + quant + uniprice + invo_price + coffe_type + tep_type + size_type + month_type + clock_type + Controlable_income + number, data = coffee)
+
+lm0.1 <- lm(totprice ~ area_type, data = coffee)
+summary(lm0.1)
+lm0.2 <- lm(totprice ~ channel, data = coffee)
+summary(lm0.2)
+lm0.3 <- lm(totprice ~ name, data = coffee)
+summary(lm0.3) # name 要刪掉
+
+
+lm0.1 <- lm(totprice ~ month_type, data = coffee)
+summary(lm0.1)
 
 
 
