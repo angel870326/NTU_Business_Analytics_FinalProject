@@ -4,15 +4,13 @@ setwd("自己打 working directory")
 # all_merge <- read.csv("all_merge4.csv")
 # library(dplyr)
 # all_merge <- distinct(all_merge)
+# all_merge <- subset(all_merge, select = -c(2,3,5,6) )
 # saveRDS(all_merge, file = "all_merge.rds")
 
 all_merge <- readRDS("all_merge.rds")
-
 coffee <- subset(all_merge, (all_merge$special_type=="normal"))
-pairs(all_merge[,c(10,8,9,11,19,21,22)], pch=19, cex=0.5)
 
-# subset
-coffee <-  subset(all_merge, (all_merge$special_type=="normal"), select = -c(datetime_UTC_8,deviceid,invo_idx,id) )
+pairs(coffee[,c(6,4,5,7,15,17,18)], pch=19, cex=0.5)
 
 
 
