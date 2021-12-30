@@ -1,15 +1,22 @@
 setwd("自己打 working directory")
 
 # 只要跑一次存好檔，讀檔比較快
-# all_merge <- read.csv("all_merge4.csv")
+# all_merge <- read.csv("all_merge5.csv")
 # library(dplyr)
 # all_merge <- distinct(all_merge)
-# all_merge <- subset(all_merge, select = -c(2,3,5,6) )
-# all_merge <- subset(all_merge, select = -c(3,8) )
-# saveRDS(all_merge, file = "all_merge.rds")
+# all_merge <- subset(all_merge, select = -c(2,3,5,6,12) )
+# saveRDS(all_merge, file = "all_merge_withNames.rds")
+# all_merge <- subset(all_merge, select = -c(3) ) # names
+# coffee <- subset(all_merge, (all_merge$special_type=="normal"))
+# coffee <- subset(coffee, (coffee$uniprice<=200))
+# coffee <- subset(coffee, select = -c(12) ) # 刪 special_type
+# saveRDS(coffee, file = "coffee.rds")
+# coffee <- subset(coffee, select = -c(15) ) # 刪 number
+# coffee[which(coffee$tep_type =="non"&coffee$channel =="星巴克"),"tep_type"] <- "熱"
+# saveRDS(coffee, file = "coffee_withoutNum.rds")
 
-all_merge <- readRDS("all_merge.rds")
-coffee <- subset(all_merge, (all_merge$special_type=="normal"))
+coffee <- readRDS("coffee_withoutNum.rds")
+
 
 pairs(coffee[,c(6,4,5,7,15,17,18)], pch=19, cex=0.5)
 
