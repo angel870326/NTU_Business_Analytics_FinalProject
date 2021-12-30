@@ -17,6 +17,7 @@ setwd("自己打 working directory")
 # saveRDS(coffee, file = "coffee_withoutNum.rds")
 
 coffee <- readRDS("coffee_withoutNum.rds")
+coffee <- subset(coffee,coffee$size_type!="non"&coffee$tep_type!="non")
 
 
 pairs(coffee[,c(6,4,5,7,15,17,18)], pch=19, cex=0.5)
@@ -79,4 +80,13 @@ hist(coffee$totprice, xlab="totprice", main="Histogram of totprice", breaks=10)
 coffee$recipTotprice <- 1 / coffee$totprice
 hist(coffee$recipTotprice, xlab="recipTotprice", main="Histogram of recipTotprice", breaks=10)
 
+# model1
+lm1 <- lm(recipTotprice ~ area_type + channel + quant + uniprice + invo_price + coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = coffee)
+summary(lm1)
 
+par(mfrow=c(1,3))
+plot(fitted(lm1), residuals(lm1), main="Residual Plots", xlab="fitted", ylab="Residuals", cex=0.4, pch=19) 
+abline(h=0)
+hist(residuals(lm1), main="Histogram of Residuals", xlab = "Residuals")
+qqnorm(residuals(lm1), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
+qqline(residuals(lm1))
