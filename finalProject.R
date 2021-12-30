@@ -13,6 +13,7 @@ setwd("自己打 working directory")
 # saveRDS(coffee, file = "coffee.rds")
 # coffee <- subset(coffee, select = -c(15) ) # 刪 number
 # coffee[which(coffee$tep_type =="non"&coffee$channel =="星巴克"),"tep_type"] <- "熱"
+# coffee <- subset(coffee,coffee$quant*coffee$uniprice==coffee$totprice)
 # saveRDS(coffee, file = "coffee_withoutNum.rds")
 
 coffee <- readRDS("coffee_withoutNum.rds")
@@ -20,19 +21,7 @@ coffee <- readRDS("coffee_withoutNum.rds")
 
 pairs(coffee[,c(6,4,5,7,15,17,18)], pch=19, cex=0.5)
 
-# name、county_district 拿掉
-lm1 <- lm(totprice ~ area_type + channel + quant + uniprice + invo_price + coffe_type + tep_type + size_type + month_type + clock_type + Controlable_income + number, data = coffee)
 
-lm0.1 <- lm(totprice ~ area_type, data = coffee)
-summary(lm0.1)
-lm0.2 <- lm(totprice ~ channel, data = coffee)
-summary(lm0.2)
-lm0.3 <- lm(totprice ~ name, data = coffee)
-summary(lm0.3) # name 要刪掉
-
-
-lm0.1 <- lm(totprice ~ month_type, data = coffee)
-summary(lm0.1)
 
 
 coffee[which(coffee$tep_type =="non" & channel =="星巴克"),]
