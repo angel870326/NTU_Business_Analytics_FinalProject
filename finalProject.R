@@ -84,12 +84,19 @@ qplot(groupsize$size_type,groupsize$sumtotprice, data = groupsize, color=channel
 grouptep_type<-group_by(coffee,channel,tep_type)%>%
   summarise(transactions=n(),sumtotprice=sum(totprice),sumquant=sum(quant),
             meantotprice=mean(totprice))
-qplot(grouptep_type$tep_type,grouptep_type$sumquant, data = grouptep_type, color=channel,xlab="Temperature Type",ylab ="Quantity", 
+qplot(grouptep_type$tep_type,grouptep_type$sumquant, data = grouptep_type, color=channel,xlab="Temperature",ylab ="Quantity", 
       main ="不同咖啡溫度的銷售量")+theme(plot.title=element_text(hjust = 0.5))
-qplot(grouptep_type$tep_type,grouptep_type$sumtotprice, data = grouptep_type, color=channel,xlab="Temperature Type",ylab ="Total Price", 
+qplot(grouptep_type$tep_type,grouptep_type$sumtotprice, data = grouptep_type, color=channel,xlab="Temperature",ylab ="Total Price", 
       main ="不同咖啡溫度的銷售總額")+theme(plot.title=element_text(hjust = 0.5))
 
-
+groupweek <- group_by(coffee, channel, week_type)%>%
+  summarise(transactions=n(),sumtotprice=sum(totprice),
+            meantotprice=mean(totprice),sumquant=sum(quant),
+            meanquant=mean(quant))
+qplot(groupweek$week_type,groupweek$sumquant, data = groupweek, color=channel,xlab="Week Type",ylab ="Quantity", 
+      main ="平日、假日的銷售量")+theme(plot.title=element_text(hjust = 0.5))
+qplot(groupweek$week_type,groupweek$sumtotprice, data = groupweek, color=channel,xlab="Week Type",ylab ="Total Price", 
+      main ="平日、假日的銷售總額")+theme(plot.title=element_text(hjust = 0.5))
 
 # Model
 par(mfrow=c(1,2))
