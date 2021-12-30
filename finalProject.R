@@ -71,3 +71,11 @@ groupsize <- group_by(size_nonon, channel, size_type)%>%
             meanquant=mean(quant))
 qplot(groupsize$size_type,groupsize$sumquant, data = size, color=channel,xlab="Size Type",ylab ="Quantity", 
                  main ="不同咖啡類型的銷售總額")+theme(plot.title=element_text(hjust = 0.5))
+
+
+# Model
+hist(coffee$totprice, xlab="totprice", main="Histogram of totprice", breaks=10)
+coffee$recipTotprice <- 1 / coffee$totprice
+hist(coffee$recipTotprice, xlab="recipTotprice", main="Histogram of recipTotprice", breaks=10)
+
+
