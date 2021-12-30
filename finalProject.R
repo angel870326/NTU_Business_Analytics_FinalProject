@@ -40,6 +40,7 @@ channel_family <- subset(all_merge, (all_merge$channel=="全家"))
 channel_starbucks <- subset(all_merge, (all_merge$channel=="星巴克"))
 channel_cama <- subset(all_merge, (all_merge$channel=="cama"))
 
+# 銷售量
 library(ggplot2)
 groupcoffe_type<-group_by(coffee,channel,coffe_type)%>%
   summarise(transactions=n(),sumtotprice=sum(totprice),sumquant=sum(quant),
