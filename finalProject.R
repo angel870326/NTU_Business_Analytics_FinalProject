@@ -28,7 +28,8 @@ lm0.1 <- lm(totprice ~ month_type, data = coffee)
 summary(lm0.1)
 
 
-
+coffee[which(coffee$tep_type =="non" & channel =="星巴克"),]
+coffee[which(coffee$tep_type =="non"&channel =="星巴克"),'tep_type'] <- "熱"
 
 
 
