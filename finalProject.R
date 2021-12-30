@@ -40,7 +40,7 @@ channel_family <- subset(all_merge, (all_merge$channel=="全家"))
 channel_starbucks <- subset(all_merge, (all_merge$channel=="星巴克"))
 channel_cama <- subset(all_merge, (all_merge$channel=="cama"))
 
-# 銷售量
+
 library(ggplot2)
 groupcoffe_type<-group_by(coffee,channel,coffe_type)%>%
   summarise(transactions=n(),sumtotprice=sum(totprice),sumquant=sum(quant),
@@ -48,6 +48,9 @@ groupcoffe_type<-group_by(coffee,channel,coffe_type)%>%
 qplot(groupcoffe_type$coffe_type, groupcoffe_type$sumquant, data = groupcoffe_type, 
       color=channel,xlab="coffee_type",ylab ="quant", 
       main ="不同咖啡類型的銷售量")+theme(plot.title=element_text(hjust = 0.5))
+qplot(groupcoffe_type$coffe_type, groupcoffe_type$sumtotprice, data = groupcoffe_type, 
+      color=channel,xlab="coffee_type",ylab ="totalprice", 
+      main ="不同咖啡類型的銷售總額")+theme(plot.title=element_text(hjust = 0.5))
 
 groupmonth_type<-group_by(coffee,channel,month_type)%>%
   summarise(transactions=n(),sumtotprice=sum(totprice),sumquant=sum(quant),
