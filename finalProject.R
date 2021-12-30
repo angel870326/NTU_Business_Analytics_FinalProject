@@ -78,9 +78,16 @@ groupsize <- group_by(coffee, channel, size_type)%>%
             meanquant=mean(quant))
 qplot(groupsize$size_type,groupsize$sumquant, data = groupsize, color=channel,xlab="Size Type",ylab ="Quantity", 
       main ="不同咖啡大小的銷售量")+theme(plot.title=element_text(hjust = 0.5))
-qplot(groupsize$size_type,groupsize$sumquant, data = groupsize, color=channel,xlab="Size Type",ylab ="Total Price", 
+qplot(groupsize$size_type,groupsize$sumtotprice, data = groupsize, color=channel,xlab="Size Type",ylab ="Total Price", 
       main ="不同咖啡大小的銷售總額")+theme(plot.title=element_text(hjust = 0.5))
 
+grouptep_type<-group_by(coffee,channel,tep_type)%>%
+  summarise(transactions=n(),sumtotprice=sum(totprice),sumquant=sum(quant),
+            meantotprice=mean(totprice))
+qplot(grouptep_type$tep_type,grouptep_type$sumquant, data = grouptep_type, color=channel,xlab="Temperature Type",ylab ="Quantity", 
+      main ="不同咖啡溫度的銷售量")+theme(plot.title=element_text(hjust = 0.5))
+qplot(grouptep_type$tep_type,grouptep_type$sumtotprice, data = grouptep_type, color=channel,xlab="Temperature Type",ylab ="Total Price", 
+      main ="不同咖啡溫度的銷售總額")+theme(plot.title=element_text(hjust = 0.5))
 
 
 
