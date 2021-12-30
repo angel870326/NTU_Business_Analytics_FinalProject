@@ -74,6 +74,7 @@ qplot(groupsize$size_type,groupsize$sumquant, data = size, color=channel,xlab="S
 
 
 # Model
+par(mfrow=c(1,2))
 hist(coffee$totprice, xlab="totprice", main="Histogram of totprice", breaks=10)
 coffee$recipTotprice <- 1 / coffee$totprice
 hist(coffee$recipTotprice, xlab="recipTotprice", main="Histogram of recipTotprice", breaks=10)
