@@ -40,29 +40,38 @@ channel_cama <- subset(all_merge, (all_merge$channel=="cama"))
 
 # EDA
 library(ggplot2)
+library(dplyr)
+
 groupcoffe_type<-group_by(coffee,channel,coffe_type)%>%
   summarise(transactions=n(),sumtotprice=sum(totprice),sumquant=sum(quant),
             meantotprice=mean(totprice))
 qplot(groupcoffe_type$coffe_type, groupcoffe_type$sumquant, data = groupcoffe_type, 
-      color=channel,xlab="coffee_type",ylab ="quant", 
+      color=channel,xlab="Coffee Type",ylab ="Quantity", 
       main ="不同咖啡類型的銷售量")+theme(plot.title=element_text(hjust = 0.5))
 qplot(groupcoffe_type$coffe_type, groupcoffe_type$sumtotprice, data = groupcoffe_type, 
-      color=channel,xlab="coffee_type",ylab ="totalprice", 
+      color=channel,xlab="Coffee Type",ylab ="Total Price", 
       main ="不同咖啡類型的銷售總額")+theme(plot.title=element_text(hjust = 0.5))
 
 groupmonth_type<-group_by(coffee,channel,month_type)%>%
   summarise(transactions=n(),sumtotprice=sum(totprice),sumquant=sum(quant),
             meantotprice=mean(totprice))
 qplot(groupmonth_type$month_type, groupmonth_type$sumquant, data = groupmonth_type, 
-      color=channel,xlab="month",ylab ="quant", 
+      color=channel,xlab="Month",ylab ="Quantity", 
       main ="不同月份的銷售量")+theme(plot.title=element_text(hjust = 0.5))
+qplot(groupmonth_type$month_type, groupmonth_type$sumtotprice, data = groupmonth_type, 
+      color=channel,xlab="Month",ylab ="Total Price", 
+      main ="不同月份的銷售總額")+theme(plot.title=element_text(hjust = 0.5))
 
 groupclock_type<-group_by(coffee,channel,clock_type)%>%
   summarise(transactions=n(),sumtotprice=sum(totprice),sumquant=sum(quant),
             meantotprice=mean(totprice))
+qplot(groupclock_type$clock_type, groupmonth_type$sumtotprice, data = groupclock_type, 
+      color=channel,xlab="Clock",ylab ="Total Price", 
+      main ="不同時點的銷售總額")+theme(plot.title=element_text(hjust = 0.5))
 qplot(groupclock_type$clock_type, groupmonth_type$sumquant, data = groupclock_type, 
-      color=channel,xlab="clock",ylab ="quant", 
+      color=channel,xlab="Clock",ylab ="Quantity", 
       main ="不同時點的銷售量")+theme(plot.title=element_text(hjust = 0.5))
+
 
 # 先把size為non的拿掉
 size_nonon <-  subset(coffee, size_type!=c("non"))
