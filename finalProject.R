@@ -39,3 +39,25 @@ channel_louisa <- subset(all_merge, (all_merge$channel=="路易莎"))
 channel_family <- subset(all_merge, (all_merge$channel=="全家"))
 channel_starbucks <- subset(all_merge, (all_merge$channel=="星巴克"))
 channel_cama <- subset(all_merge, (all_merge$channel=="cama"))
+
+library(ggplot2)
+groupcoffe_type<-group_by(coffee,channel,coffe_type)%>%
+  summarise(transactions=n(),sumtotprice=sum(totprice),sumquant=sum(quant),
+            meantotprice=mean(totprice))
+qplot(groupcoffe_type$coffe_type, groupcoffe_type$sumquant, data = groupcoffe_type, 
+      color=channel,xlab="coffee_type",ylab ="quant", 
+      main ="不同咖啡類型的銷售量")+theme(plot.title=element_text(hjust = 0.5))
+
+groupmonth_type<-group_by(coffee,channel,month_type)%>%
+  summarise(transactions=n(),sumtotprice=sum(totprice),sumquant=sum(quant),
+            meantotprice=mean(totprice))
+qplot(groupmonth_type$month_type, groupmonth_type$sumquant, data = groupmonth_type, 
+      color=channel,xlab="month",ylab ="quant", 
+      main ="不同月份的銷售量")+theme(plot.title=element_text(hjust = 0.5))
+
+groupclock_type<-group_by(coffee,channel,clock_type)%>%
+  summarise(transactions=n(),sumtotprice=sum(totprice),sumquant=sum(quant),
+            meantotprice=mean(totprice))
+qplot(groupclock_type$clock_type, groupmonth_type$sumquant, data = groupclock_type, 
+      color=channel,xlab="clock",ylab ="quant", 
+      main ="不同時點的銷售量")+theme(plot.title=element_text(hjust = 0.5))
