@@ -40,7 +40,7 @@ channel_cama <- subset(all_merge, (all_merge$channel=="cama"))
 
 # 觀察資料
 groupsort<- group_by(coffee, channel)%>%
-  summarise(transactions=n(),sum_totalprice=sum(totprice),
+  summarise(transactions=n(),mean_unitprice=mean(uniprice),sum_totalprice=sum(totprice),
             mean_totalprice=mean(totprice),sum_quantity=sum(quant),
             mean_quantity=mean(quant))
 
