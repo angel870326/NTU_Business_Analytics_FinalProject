@@ -42,6 +42,14 @@ channel_cama <- subset(all_merge, (all_merge$channel=="cama"))
 library(ggplot2)
 library(dplyr)
 
+options(scipen = 999)
+groupuni<- group_by(coffee, channel, uniprice)%>%
+  summarise(transactions=n(),sumtotprice=sum(totprice),
+            meantotprice=mean(totprice),sumquant=sum(quant),
+            meanquant=mean(quant))
+qplot(groupuni$uniprice,groupuni$sumtotprice, data = groupuni, color=channel,xlab="Unit Price",ylab ="Totol Price", 
+      main ="單價與總銷售額關係")+theme(plot.title=element_text(hjust = 0.5))
+
 groupcoffe_type<-group_by(coffee,channel,coffe_type)%>%
   summarise(transactions=n(),sumtotprice=sum(totprice),sumquant=sum(quant),
             meantotprice=mean(totprice))
