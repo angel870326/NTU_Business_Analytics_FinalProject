@@ -8,7 +8,7 @@ setwd("自己打 working directory")
 # saveRDS(all_merge, file = "all_merge_withNames.rds")
 # all_merge <- subset(all_merge, select = -c(3) ) # names
 # coffee <- subset(all_merge, (all_merge$special_type=="normal"))
-# coffee <- subset(coffee, (coffee$uniprice<=200))
+# coffee <- subset(coffee, (coffee$uniprice<=200))  # 刪uniprice>200
 # coffee <- subset(coffee, select = -c(12) ) # 刪 special_type
 # saveRDS(coffee, file = "coffee.rds")
 # coffee <- subset(coffee, select = -c(15) ) # 刪 number
