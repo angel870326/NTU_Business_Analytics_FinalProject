@@ -152,12 +152,12 @@ qplot(groupweek$week_type,groupweek$sumtotprice, data = groupweek, color=channel
 groupclock_type<-group_by(coffee,channel,clock_type)%>%
   summarise(transactions=n(),sumtotprice=sum(totprice),sumquant=sum(quant),
             meantotprice=mean(totprice))
-qplot(groupclock_type$clock_type, groupmonth_type$sumtotprice, data = groupclock_type, 
+qplot(groupclock_type$clock_type, groupclock_type$sumtotprice, data = groupclock_type, 
       color=channel,xlab="Clock",ylab ="Total Price", 
-      main ="不同時點的銷售總額")+theme(plot.title=element_text(hjust = 0.5),axis.text.x = element_text(angle = -45, vjust = 0.5))
-qplot(groupclock_type$clock_type, groupmonth_type$sumquant, data = groupclock_type, 
+      main ="不同時點的銷售總額")+theme(plot.title=element_text(hjust = 0.5))
+qplot(groupclock_type$clock_type, groupclock_type$sumquant, data = groupclock_type, 
       color=channel,xlab="Clock",ylab ="Quantity", 
-      main ="不同時點的銷售量")+theme(plot.title=element_text(hjust = 0.5),axis.text.x = element_text(angle = -45, vjust = 0.5))
+      main ="不同時點的銷售量")+theme(plot.title=element_text(hjust = 0.5))
 
 # Model
 par(mfrow=c(1,2))
