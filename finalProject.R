@@ -38,6 +38,12 @@ channel_family <- subset(all_merge, (all_merge$channel=="全家"))
 channel_starbucks <- subset(all_merge, (all_merge$channel=="星巴克"))
 channel_cama <- subset(all_merge, (all_merge$channel=="cama"))
 
+# 觀察資料
+groupsort<- group_by(coffee, channel)%>%
+  summarise(transactions=n(),sum_totalprice=sum(totprice),
+            mean_totalprice=mean(totprice),sum_quantity=sum(quant),
+            mean_quantity=mean(quant))
+
 # EDA
 library(ggplot2)
 library(dplyr)
