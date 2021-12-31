@@ -41,6 +41,17 @@ channel_cama <- subset(all_merge, (all_merge$channel=="cama"))
 # EDA
 library(ggplot2)
 library(dplyr)
+groupNUM<- group_by(coffee, area_type, number)%>%
+  summarise(transactions=n(),sumtotprice=sum(totprice),
+            meantotprice=mean(totprice),sumquant=sum(quant),
+            meanquant=mean(quant))
+
+qplot(coffee$area_type,coffee$number, data = coffee, color=channel,xlab="Area",ylab ="Store Number", 
+      main ="各地區的門市數")+theme(plot.title=element_text(hjust = 0.5),axis.text.x = element_text(angle = 270, vjust = 0.5))
+
+qplot(groupNUM$area_type,groupNUM$number, data = groupNUM, color=channel,xlab="Area",ylab ="Store Number", 
+      main ="各地區的門市數")+theme(plot.title=element_text(hjust = 0.5),axis.text.x = element_text(angle = 270, vjust = 0.5))
+
 
 qplot(income$county,income$disposable_income, data = income, xlab="Area",ylab ="Disposable Income", 
       main ="每人每月可支配所得")+theme(plot.title=element_text(hjust = 0.5),axis.text.x = element_text(angle = 270, vjust = 0.5))
