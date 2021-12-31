@@ -47,6 +47,14 @@ groupsort<- group_by(coffee, channel)%>%
 # EDA
 library(ggplot2)
 library(dplyr)
+groupchuni <- group_by(coffee, channel, uniprice)%>%
+  summarise(transactions=n(),sumtotprice=sum(totprice),
+            meantotprice=mean(totprice),sumquant=sum(quant),
+            meanquant=mean(quant))
+qplot(groupchuni$channel,groupchuni$uniprice, data = groupchuni ,xlab="ccc",ylab ="uniprice", 
+      main ="銷售價")+theme(plot.title=element_text(hjust = 0.5))
+plot(groupchuni$channel,groupchuni$uniprice,ylab="Unit Price", xlab="Channel",main="通路與單價的關係")
+
 groupNUM<- group_by(coffee, area_type, number)%>%
   summarise(transactions=n(),sumtotprice=sum(totprice),
             meantotprice=mean(totprice),sumquant=sum(quant),
