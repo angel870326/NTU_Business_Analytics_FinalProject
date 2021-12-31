@@ -184,8 +184,6 @@ coffee1 <- subset(coffee, (coffee$cooks1<1))
 lm2 <- lm(logTotprice ~ area_type + channel + quant + uniprice + invo_price + coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = coffee1)
 summary(lm2)
 
-
-
 par(mfrow=c(1,3))
 plot(fitted(lm1), residuals(lm1), main="Residual Plots", xlab="fitted", ylab="Residuals", cex=0.4, pch=19) 
 abline(h=0)
@@ -193,26 +191,23 @@ hist(residuals(lm1), main="Histogram of Residuals", xlab = "Residuals")
 qqnorm(residuals(lm1), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
 qqline(residuals(lm1))
 
-
 coffee$logTotprice <- log(coffee$totprice)
 coffee$cooks1<- cooks.distance(lm1)
 coffee1 <- subset(coffee, (coffee$cooks1<1))
-
 
 lm2 <- lm(logTotprice ~ area_type + channel + quant + uniprice + invo_price + coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = coffee1)
 summary(lm2)
 vif(lm2,digits = 3)
 
-lm3 <- lm(logTotprice ~ area_type + channel + quant + invo_price + coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = coffee1)
+# model3
+# studentized
+rescoffee <- rstandard(lm2)	# studentized residuals
+coffee1$stuout4 <- rstandard(lm2)
+coffee2 <- subset(coffee1, coffee1$stuout4>(-4) | coffee1$stuout4<4)
+coffee2
+
+lm3 <- lm(logTotprice ~ area_type + channel + quant + uniprice + invo_price + coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = coffee2)
 summary(lm3)
-vif(lm3,digits = 3)
-groupchuni <- group_by(coffee, channel, uniprice)%>%
-  summarise(transactions=n(),sumtotprice=sum(totprice),
-            meantotprice=mean(totprice),sumquant=sum(quant),
-            meanquant=mean(quant))
-qplot(groupchuni$channel,groupchuni$uniprice, data = groupchuni ,xlab="ccc",ylab ="uniprice", 
-      main ="銷售價")+theme(plot.title=element_text(hjust = 0.5))
-plot(groupchuni$channel,groupchuni$uniprice,ylab="Unit Price", xlab="Channel",main="通路與單價的關係")
 
 par(mfrow=c(1,3))
 plot(fitted(lm3), residuals(lm3), main="Residual Plots", xlab="fitted", ylab="Residuals", cex=0.4, pch=19) 
