@@ -42,6 +42,14 @@ channel_cama <- subset(all_merge, (all_merge$channel=="cama"))
 library(ggplot2)
 library(dplyr)
 
+grouptepclock<- group_by(coffee, clock_type, tep_type)%>%
+  summarise(transactions=n(),sumtotprice=sum(totprice),
+            meantotprice=mean(totprice),sumquant=sum(quant),
+            meanquant=mean(quant))
+options(scipen = 999)
+qplot(grouptepclock$tep_type,grouptepclock$sumtotprice, data = grouptepclock, color=clock_type,xlab="Temperature",ylab ="Totol Price", 
+      main ="溫度和時間的關係")+theme(plot.title=element_text(hjust = 0.5))
+
 options(scipen = 999)
 grouparea<- group_by(coffee, channel, area_type)%>%
   summarise(transactions=n(),sumtotprice=sum(totprice),
