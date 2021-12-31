@@ -42,6 +42,14 @@ channel_cama <- subset(all_merge, (all_merge$channel=="cama"))
 library(ggplot2)
 library(dplyr)
 
+grouptepcoff<- group_by(coffee, tep_type, coffe_type)%>%
+  summarise(transactions=n(),sumtotprice=sum(totprice),
+            meantotprice=mean(totprice),sumquant=sum(quant),
+            meanquant=mean(quant))
+
+qplot(grouptepcoff$tep_type,grouptepcoff$sumtotprice, data = grouptepcoff, color=coffe_type,xlab="Temperature",ylab ="Quantity", 
+      main ="咖啡類型和溫度的關係")+theme(plot.title=element_text(hjust = 0.5))
+
 grouptepsize<- group_by(coffee, size_type, tep_type)%>%
   summarise(transactions=n(),sumtotprice=sum(totprice),
             meantotprice=mean(totprice),sumquant=sum(quant),
