@@ -42,6 +42,9 @@ channel_cama <- subset(all_merge, (all_merge$channel=="cama"))
 library(ggplot2)
 library(dplyr)
 
+qplot(income$county,income$disposable_income, data = income, xlab="Area",ylab ="Disposable Income", 
+      main ="每人每月可支配所得")+theme(plot.title=element_text(hjust = 0.5),axis.text.x = element_text(angle = 270, vjust = 0.5))
+
 grouptepcoff<- group_by(coffee, tep_type, coffe_type)%>%
   summarise(transactions=n(),sumtotprice=sum(totprice),
             meantotprice=mean(totprice),sumquant=sum(quant),
