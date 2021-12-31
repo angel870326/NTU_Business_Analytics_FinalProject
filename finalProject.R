@@ -43,6 +43,13 @@ library(ggplot2)
 library(dplyr)
 
 options(scipen = 999)
+grouparea<- group_by(coffee, channel, area_type)%>%
+  summarise(transactions=n(),sumtotprice=sum(totprice),
+            meantotprice=mean(totprice),sumquant=sum(quant),
+            meanquant=mean(quant))
+qplot(grouparea$area_type,grouparea$sumtotprice, data = grouparea, color=channel,xlab="Area",ylab ="Totol Price", 
+      main ="地區與總銷售額關係")+theme(plot.title=element_text(hjust = 0.5),axis.text.x = element_text(angle = 270, vjust = 0.5))
+
 groupuni<- group_by(coffee, channel, uniprice)%>%
   summarise(transactions=n(),sumtotprice=sum(totprice),
             meantotprice=mean(totprice),sumquant=sum(quant),
