@@ -166,8 +166,17 @@ coffee$recipTotprice <- 1 / coffee$totprice
 hist(coffee$recipTotprice, xlab="recipTotprice", main="Histogram of recipTotprice", breaks=10)
 
 # model1
-lm1 <- lm(recipTotprice ~ area_type + channel + quant + uniprice + invo_price + coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = coffee)
+coffee$logTotprice <- log(coffee$totprice)
+lm1 <- lm(logTotprice ~ area_type + channel + quant + uniprice + invo_price + coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = coffee)
 summary(lm1)
+coffee$cooks1<- cooks.distance(lm1)
+coffee1 <- subset(coffee, (coffee$cooks1<1))
+
+# model2
+lm2 <- lm(logTotprice ~ area_type + channel + quant + uniprice + invo_price + coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = coffee1)
+summary(lm2)
+
+
 
 par(mfrow=c(1,3))
 plot(fitted(lm1), residuals(lm1), main="Residual Plots", xlab="fitted", ylab="Residuals", cex=0.4, pch=19) 
