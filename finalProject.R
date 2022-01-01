@@ -210,21 +210,29 @@ qqnorm(residuals(lm3), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pc
 qqline(residuals(lm3))
 
 #seven
+# Model
 groupseven<-subset(coffee2, (coffee2$channel=="seven"))
 logTotprice7 <- log(groupseven$sumtotprice)
 lmseven<-lm(logTotprice7 ~  area_type +coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = groupseven)
 summary(lmseven)
+# Residual Plots
 par(mfrow=c(1,3))
+plot(fitted(lmseven), residuals(lmseven), main="Residual Plots", xlab="fitted", ylab="Residuals", cex=0.4, pch=19) 
+abline(h=0)
 hist(residuals(lmseven), main="Histogram of Residuals", xlab = "Residuals")
 qqnorm(residuals(lmseven), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
 qqline(residuals(lmseven))
 
 #cama
+# Model
 groupcama<-subset(coffee2, (coffee2$channel=="cama"))
 logTotpricecama <- log(groupcama$sumtotprice)
 lmcama<-lm(logTotpricecama ~  area_type +coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = groupcama)
 summary(lmcama)
+# Residual Plots
 par(mfrow=c(1,3))
+plot(fitted(lmcama), residuals(lmcama), main="Residual Plots", xlab="fitted", ylab="Residuals", cex=0.4, pch=19) 
+abline(h=0)
 hist(residuals(lmcama), main="Histogram of Residuals", xlab = "Residuals")
 qqnorm(residuals(lmcama), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
 qqline(residuals(lmcama))
