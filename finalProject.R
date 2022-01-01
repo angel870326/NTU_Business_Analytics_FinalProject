@@ -201,12 +201,29 @@ hist(residuals(lm3), main="Histogram of Residuals", xlab = "Residuals")
 qqnorm(residuals(lm3), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
 qqline(residuals(lm3))
 
+# 將所有類別變數group在一起
+group1<- group_by(coffee, area_type,month_type,week_type,clock_type,channel,coffe_type, size_type,tep_type)%>%
+  summarise(transactions=n(),sumtotprice=sum(totprice),
+            meantotprice=mean(totprice),sumquant=sum(quant),
+            meanquant=mean(quant))
+group1$logTotprice <- log(group1$sumtotprice)
+# relevel
+group1$area_type <- relevel(factor(group1$area_type), ref="臺北市")
+group1$channel <- relevel(factor(group1$channel), ref="seven")
+
+# 分不同channel (用group1分)
+coffee_seven <- subset(group1, (group1$channel=="seven"))
+coffee_louisa <- subset(group1, (group1$channel=="路易莎"))
+coffee_family <- subset(group1, (group1$channel=="全家"))
+coffee_starbucks <- subset(group1, (group1$channel=="星巴克"))
+coffee_cama <- subset(group1, (group1$channel=="cama"))
+
 # 全家
 # 用未剔除異常值的 group1 分 channel
+groupfmart<-subset(group1, (group1$channel=="全家"))
 group1$logTotprice <- log(group1$sumtotprice)
 group1$area_type <- relevel(factor(group1$area_type), ref="臺北市")
 group1$channel <- relevel(factor(group1$channel), ref="seven")
-groupfmart<-subset(group1, (group1$channel=="全家"))
 # Model
 lmfmart <- lm(logTotprice ~ area_type+month_type+week_type+clock_type+coffe_type+size_type+tep_type, data = groupfmart)
 summary(lmfmart)
@@ -231,18 +248,30 @@ hist(residuals(lmfmart2), main="Histogram of Residuals", xlab = "Residuals")
 qqnorm(residuals(lmfmart2), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
 qqline(residuals(lmfmart2))
 
-# seven
-groupseven<-subset(coffee2, (coffee2$channel=="seven"))
+# 7-11
 # Model
-lmseven<-lm(logTotprice ~  area_type +coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = groupseven)
+lmseven<-lm(logTotprice ~  area_type +coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = coffee_seven)
 summary(lmseven)
-# Residual Plots
+# Residual plots
 par(mfrow=c(1,3))
 plot(fitted(lmseven), residuals(lmseven), main="Residual Plots", xlab="fitted", ylab="Residuals", cex=0.4, pch=19) 
 abline(h=0)
 hist(residuals(lmseven), main="Histogram of Residuals", xlab = "Residuals")
 qqnorm(residuals(lmseven), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
 qqline(residuals(lmseven))
+# 刪除異常值
+coffee_seven$stuout3 <- rstandard(lmseven)
+coffee_seven2 <- subset(coffee_seven, coffee_seven$stuout3>(-3) & coffee_seven$stuout3<3)
+# Model2
+lmseven2<-lm(logTotprice ~  area_type +coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = coffee_seven2)
+summary(lmseven2)
+# Residual plots
+par(mfrow=c(1,3))
+plot(fitted(lmseven2), residuals(lmseven2), main="Residual Plots", xlab="fitted", ylab="Residuals", cex=0.4, pch=19) 
+abline(h=0)
+hist(residuals(lmseven2), main="Histogram of Residuals", xlab = "Residuals")
+qqnorm(residuals(lmseven2), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
+qqline(residuals(lmseven2))
 
 #cama
 groupcama<-subset(coffee2, (coffee2$channel=="cama"))
@@ -258,27 +287,51 @@ qqnorm(residuals(lmcama), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4,
 qqline(residuals(lmcama))
 
 # 星巴克
-groupstar <- subset(coffee2, (coffee2$channel=="星巴克"))
 # Model
-lmstar <- lm(logTotprice ~  area_type +coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = groupstar)
+lmstar<-lm(logTotprice ~  area_type + coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = coffee_starbucks)
 summary(lmstar)
-# Residual Plots
+# Residual plots
 par(mfrow=c(1,3))
 plot(fitted(lmstar), residuals(lmstar), main="Residual Plots", xlab="fitted", ylab="Residuals", cex=0.4, pch=19) 
 abline(h=0)
 hist(residuals(lmstar), main="Histogram of Residuals", xlab = "Residuals")
 qqnorm(residuals(lmstar), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
 qqline(residuals(lmstar))
+# 刪除異常值
+coffee_starbucks$stuout3 <- rstandard(lmstar)
+coffee_starbucks2 <- subset(coffee_starbucks, coffee_starbucks$stuout3>(-3) & coffee_starbucks$stuout3<3)
+# Model2
+lmstar2<-lm(logTotprice ~  area_type + coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = coffee_starbucks2)
+summary(lmstar2)
+# Residual plots
+par(mfrow=c(1,3))
+plot(fitted(lmstar2), residuals(lmstar2), main="Residual Plots", xlab="fitted", ylab="Residuals", cex=0.4, pch=19) 
+abline(h=0)
+hist(residuals(lmstar2), main="Histogram of Residuals", xlab = "Residuals")
+qqnorm(residuals(lmstar2), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
+qqline(residuals(lmstar2))
 
 # 路易莎
-grouplouisa<-subset(coffee2, (coffee2$channel=="路易莎"))
 # Model
-lmlouisa<-lm(logTotprice ~  area_type +coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = grouplouisa)
+lmlouisa<-lm(logTotprice ~  area_type + coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = coffee_louisa)
 summary(lmlouisa)
-# Residual Plots
+# Residual plots
 par(mfrow=c(1,3))
 plot(fitted(lmlouisa), residuals(lmlouisa), main="Residual Plots", xlab="fitted", ylab="Residuals", cex=0.4, pch=19) 
 abline(h=0)
 hist(residuals(lmlouisa), main="Histogram of Residuals", xlab = "Residuals")
 qqnorm(residuals(lmlouisa), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
 qqline(residuals(lmlouisa))
+# 刪除異常值
+coffee_louisa$stuout3 <- rstandard(lmstar)
+coffee_louisa2 <- subset(coffee_louisa, coffee_louisa$stuout3>(-3) & coffee_louisa$stuout3<3)
+# M
+lmlouisa2<-lm(logTotprice ~  area_type + coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = coffee_louisa2)
+summary(lmlouisa2)
+# Residual plots
+par(mfrow=c(1,3))
+plot(fitted(lmlouisa2), residuals(lmlouisa2), main="Residual Plots", xlab="fitted", ylab="Residuals", cex=0.4, pch=19) 
+abline(h=0)
+hist(residuals(lmlouisa2), main="Histogram of Residuals", xlab = "Residuals")
+qqnorm(residuals(lmlouisa2), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
+qqline(residuals(lmlouisa2))
