@@ -217,3 +217,12 @@ summary(lm4)
 hist(residuals(lm4), main="Histogram of Residuals", xlab = "Residuals")
 qqnorm(residuals(lm4), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
 qqline(residuals(lm4))
+
+#cama
+groupcama<-subset(coffee2, (coffee2$channel=="cama"))
+logTotpricecama <- log(groupcama$sumtotprice)
+lm5<-lm(logTotpricecama ~  area_type +coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = groupcama)
+summary(lm5)
+hist(residuals(lm5), main="Histogram of Residuals", xlab = "Residuals")
+qqnorm(residuals(lm5), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
+qqline(residuals(lm5))
