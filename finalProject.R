@@ -226,3 +226,31 @@ summary(lm5)
 hist(residuals(lm5), main="Histogram of Residuals", xlab = "Residuals")
 qqnorm(residuals(lm5), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
 qqline(residuals(lm5))
+
+# 星巴克
+# Model
+groupstar <- subset(coffee2, (coffee2$channel=="星巴克"))
+logTotpricestar <- log(groupstar$sumtotprice)
+lmstar <- lm(logTotpricestar ~  area_type +coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = groupstar)
+summary(lmstar)
+# Residual Plots
+par(mfrow=c(1,3))
+plot(fitted(lmstar), residuals(lmstar), main="Residual Plots", xlab="fitted", ylab="Residuals", cex=0.4, pch=19) 
+abline(h=0)
+hist(residuals(lmstar), main="Histogram of Residuals", xlab = "Residuals")
+qqnorm(residuals(lmstar), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
+qqline(residuals(lmstar))
+
+# 路易莎
+# Model
+grouplouisa<-subset(coffee2, (coffee2$channel=="路易莎"))
+logTotpricelouisa <- log(grouplouisa$sumtotprice)
+lmlouisa<-lm(logTotpricelouisa ~  area_type +coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = grouplouisa)
+summary(lmlouisa)
+# Residual Plots
+par(mfrow=c(1,3))
+plot(fitted(lmlouisa), residuals(lmlouisa), main="Residual Plots", xlab="fitted", ylab="Residuals", cex=0.4, pch=19) 
+abline(h=0)
+hist(residuals(lmlouisa), main="Histogram of Residuals", xlab = "Residuals")
+qqnorm(residuals(lmlouisa), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
+qqline(residuals(lmlouisa))
