@@ -215,3 +215,33 @@ abline(h=0)
 hist(residuals(lm3), main="Histogram of Residuals", xlab = "Residuals")
 qqnorm(residuals(lm3), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
 qqline(residuals(lm1))
+
+###
+group1<- group_by(coffee, area_type,size_type, tep_type,channel,coffe_type,month_type,  clock_type , week_type)%>%
+  summarise(transactions=n(),sumtotprice=sum(totprice),
+            meantotprice=mean(totprice),sumquant=sum(quant),
+            meanquant=mean(quant))
+lm1<-lm(sumtotprice~area_type + channel +  coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = group1)
+summary(lm1)
+hist(residuals(lm1), main="Histogram of Residuals", xlab = "Residuals")
+qqnorm(residuals(lm1), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
+qqline(residuals(lm1))
+
+rescoffee <- rstandard(lm1)	# studentized residuals
+group1$stuout4 <- rstandard(lm1)
+
+coffee2 <- subset(group1, group1$stuout4>(-3) & group1$stuout4<3)
+lm2<-lm(sumtotprice~area_type + channel +  coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = coffee2)
+summary(lm2)
+hist(residuals(lm2), main="Histogram of Residuals", xlab = "Residuals")
+qqnorm(residuals(lm2), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
+qqline(residuals(lm2))
+
+logTotprice <- log(coffee2$sumtotprice)
+coffee2$area_type <- relevel(factor(coffee2$area_type), ref="臺北市")
+coffee2$channel <- relevel(factor(coffee2$channel), ref="seven")
+lm3<-lm(logTotprice ~area_type + channel +  coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = coffee2)
+summary(lm3)
+hist(residuals(lm3), main="Histogram of Residuals", xlab = "Residuals")
+qqnorm(residuals(lm3), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
+qqline(residuals(lm3))
