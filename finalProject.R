@@ -208,3 +208,12 @@ abline(h=0)
 hist(residuals(lm3), main="Histogram of Residuals", xlab = "Residuals")
 qqnorm(residuals(lm3), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
 qqline(residuals(lm3))
+
+#seven
+groupseven<-subset(coffee2, (coffee2$channel=="seven"))
+logTotprice7 <- log(groupseven$sumtotprice)
+lm4<-lm(logTotprice7 ~  area_type +coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = groupseven)
+summary(lm4)
+hist(residuals(lm4), main="Histogram of Residuals", xlab = "Residuals")
+qqnorm(residuals(lm4), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
+qqline(residuals(lm4))
