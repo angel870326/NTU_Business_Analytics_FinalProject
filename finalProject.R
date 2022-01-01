@@ -202,7 +202,11 @@ qqnorm(residuals(lm3), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pc
 qqline(residuals(lm3))
 
 # 全家
-groupfmart<-subset(coffee2, (coffee2$channel=="全家"))
+# 用未剔除異常值的 group1 分 channel
+groupfmart<-subset(group1, (group1$channel=="全家"))
+group1$logTotprice <- log(group1$sumtotprice)
+group1$area_type <- relevel(factor(group1$area_type), ref="臺北市")
+group1$channel <- relevel(factor(group1$channel), ref="seven")
 # Model
 lmfmart <- lm(logTotprice ~ area_type+month_type+week_type+clock_type+coffe_type+size_type+tep_type, data = groupfmart)
 summary(lmfmart)
@@ -213,6 +217,19 @@ abline(h=0)
 hist(residuals(lmfmart), main="Histogram of Residuals", xlab = "Residuals")
 qqnorm(residuals(lmfmart), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
 qqline(residuals(lmfmart))
+# 找異常值
+groupfmart$stuout3 <- rstandard(lmfmart)
+groupfmart2 <- subset(groupfmart, groupfmart$stuout3>(-3) & groupfmart$stuout3<3)
+# Model2
+lmfmart2 <- lm(logTotprice ~ area_type+month_type+week_type+clock_type+coffe_type+size_type+tep_type, data = groupfmart2)
+summary(lmfmart2)
+# Residual Plots
+par(mfrow=c(1,3))
+plot(fitted(lmfmart2), residuals(lmfmart2), main="Residual Plots", xlab="fitted", ylab="Residuals", cex=0.4, pch=19) 
+abline(h=0)
+hist(residuals(lmfmart2), main="Histogram of Residuals", xlab = "Residuals")
+qqnorm(residuals(lmfmart2), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
+qqline(residuals(lmfmart2))
 
 # seven
 groupseven<-subset(coffee2, (coffee2$channel=="seven"))
