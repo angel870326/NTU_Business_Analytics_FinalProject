@@ -19,17 +19,6 @@ setwd("自己打 working directory")
 coffee <- readRDS("coffee_withoutNum.rds")
 coffee <- subset(coffee,coffee$size_type!="non"&coffee$tep_type!="non")
 
-
-pairs(coffee[,c(6,4,5,7,15,17,18)], pch=19, cex=0.5)
-
-
-
-
-coffee[which(coffee$tep_type =="non" & channel =="星巴克"),]
-coffee[which(coffee$tep_type =="non"&channel =="星巴克"),'tep_type'] <- "熱"
-
-
-
 # 不同 channel
 summary(all_merge$channel)
 channel_711 <- subset(all_merge, (all_merge$channel=="7-11"))
@@ -163,7 +152,7 @@ qplot(groupclock_type$clock_type, groupclock_type$sumquant, data = groupclock_ty
       color=channel,xlab="Clock",ylab ="Quantity", 
       main ="不同時點的銷售量")+theme(plot.title=element_text(hjust = 0.5))
 
-# Model
+# Model（月份合併）
 library(dplyr)
 group1<- group_by(coffee, area_type,month_type,week_type,clock_type,channel,coffe_type, size_type,tep_type)%>%
   summarise(transactions=n(),sumtotprice=sum(totprice),
