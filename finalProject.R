@@ -66,7 +66,6 @@ qplot(coffee$area_type,coffee$number, data = coffee, color=channel,xlab="Area",y
 qplot(groupNUM$area_type,groupNUM$number, data = groupNUM, color=channel,xlab="Area",ylab ="Store Number", 
       main ="各地區的門市數")+theme(plot.title=element_text(hjust = 0.5),axis.text.x = element_text(angle = 270, vjust = 0.5))
 
-
 qplot(income$county,income$disposable_income, data = income, xlab="Area",ylab ="Disposable Income", 
       main ="每人每月可支配所得")+theme(plot.title=element_text(hjust = 0.5),axis.text.x = element_text(angle = 270, vjust = 0.5))
 
@@ -74,7 +73,6 @@ grouptepcoff<- group_by(coffee, tep_type, coffe_type)%>%
   summarise(transactions=n(),sumtotprice=sum(totprice),
             meantotprice=mean(totprice),sumquant=sum(quant),
             meanquant=mean(quant))
-
 qplot(grouptepcoff$tep_type,grouptepcoff$sumtotprice, data = grouptepcoff, color=coffe_type,xlab="Temperature",ylab ="Quantity", 
       main ="咖啡類型和溫度的關係")+theme(plot.title=element_text(hjust = 0.5))
 
@@ -91,11 +89,9 @@ grouptepclock<- group_by(coffee, clock_type, tep_type)%>%
   summarise(transactions=n(),sumtotprice=sum(totprice),
             meantotprice=mean(totprice),sumquant=sum(quant),
             meanquant=mean(quant))
-options(scipen = 999)
 qplot(grouptepclock$tep_type,grouptepclock$sumtotprice, data = grouptepclock, color=clock_type,xlab="Temperature",ylab ="Totol Price", 
       main ="溫度和時間的關係")+theme(plot.title=element_text(hjust = 0.5))
 
-options(scipen = 999)
 grouparea<- group_by(coffee, channel, area_type)%>%
   summarise(transactions=n(),sumtotprice=sum(totprice),
             meantotprice=mean(totprice),sumquant=sum(quant),
@@ -200,11 +196,15 @@ summary(lm2)
 vif(lm2,digits = 3)
 
 # model3
-# studentized
+
+# studentized (coffee2)
 rescoffee <- rstandard(lm2)	# studentized residuals
 coffee1$stuout4 <- rstandard(lm2)
 coffee2 <- subset(coffee1, coffee1$stuout4>(-4) | coffee1$stuout4<4)
-coffee2
+
+# change ref group (coffee)
+coffee$area_type <- relevel(factor(coffee$area_type), ref="臺北市")
+coffee$channel <- relevel(factor(coffee$channel), ref="全家")
 
 lm3 <- lm(logTotprice ~ area_type + channel + quant + uniprice + invo_price + coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = coffee2)
 summary(lm3)
