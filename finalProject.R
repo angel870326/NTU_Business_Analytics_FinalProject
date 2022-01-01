@@ -249,10 +249,9 @@ qqnorm(residuals(lmcama), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4,
 qqline(residuals(lmcama))
 
 # 星巴克
-# Model
 groupstar <- subset(coffee2, (coffee2$channel=="星巴克"))
-logTotpricestar <- log(groupstar$sumtotprice)
-lmstar <- lm(logTotpricestar ~  area_type +coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = groupstar)
+# Model
+lmstar <- lm(logTotprice ~  area_type +coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = groupstar)
 summary(lmstar)
 # Residual Plots
 par(mfrow=c(1,3))
@@ -263,10 +262,9 @@ qqnorm(residuals(lmstar), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4,
 qqline(residuals(lmstar))
 
 # 路易莎
-# Model
 grouplouisa<-subset(coffee2, (coffee2$channel=="路易莎"))
-logTotpricelouisa <- log(grouplouisa$sumtotprice)
-lmlouisa<-lm(logTotpricelouisa ~  area_type +coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = grouplouisa)
+# Model
+lmlouisa<-lm(logTotprice ~  area_type +coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = grouplouisa)
 summary(lmlouisa)
 # Residual Plots
 par(mfrow=c(1,3))
