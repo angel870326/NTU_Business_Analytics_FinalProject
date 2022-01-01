@@ -203,10 +203,10 @@ qqline(residuals(lm3))
 
 # 全家
 # 用未剔除異常值的 group1 分 channel
-groupfmart<-subset(group1, (group1$channel=="全家"))
 group1$logTotprice <- log(group1$sumtotprice)
 group1$area_type <- relevel(factor(group1$area_type), ref="臺北市")
 group1$channel <- relevel(factor(group1$channel), ref="seven")
+groupfmart<-subset(group1, (group1$channel=="全家"))
 # Model
 lmfmart <- lm(logTotprice ~ area_type+month_type+week_type+clock_type+coffe_type+size_type+tep_type, data = groupfmart)
 summary(lmfmart)
