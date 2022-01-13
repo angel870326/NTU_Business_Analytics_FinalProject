@@ -205,9 +205,7 @@ qplot(groupclock_type$clock_type, groupclock_type$sumquant, data = groupclock_ty
 # Model（月份合併）
 library(dplyr)
 group1<- group_by(coffee, area_type,month_type,week_type,clock_type,channel,coffe_type, size_type,tep_type)%>%
-  summarise(transactions=n(),sumtotprice=sum(totprice),
-            meantotprice=mean(totprice),sumquant=sum(quant),
-            meanquant=mean(quant))
+  summarise(transactions=n(),sumtotprice=sum(totprice))
 
 # Model 1
 lm1 <- lm(sumtotprice ~ area_type+month_type+week_type+clock_type+channel+coffe_type+size_type+tep_type, data = group1)
