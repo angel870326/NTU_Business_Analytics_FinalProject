@@ -1,4 +1,54 @@
 setwd("自己打 working directory")
+#讀進原始資料
+data <- read_csv("D:/R class/NTU_Coffee.csv")
+raw_data <- data.table(data)
+#將原始資料的變數進行分類
+coffe_type <- str_extract(raw_data$name,pattern="拿鐵|鮮奶咖啡|雲朵冰搖咖啡|咖啡星冰樂|那堤|美式|冷萃咖啡|曼巴咖啡|氣泡通寧|濃縮|冰咖啡|西西里|咖啡豆")
+tep_type <- str_extract(raw_data$name,pattern="冰|熱")
+size_type <- str_extract(raw_data$name,pattern = "特大|大|中|小")
+month_type <- month(raw_data$datetime_UTC_8)
+clock_type <- hour(raw_data$datetime_UTC_8)
+week <- wday(raw_data$datetime_UTC_8)
+area_type <- str_extract(raw_data$county_district,pattern="新北市|臺北市|臺中市|臺南市|桃園市|高雄市|基隆市|新竹市|嘉義市|嘉義縣|新竹縣|苗栗縣|彰化縣|南投縣|雲林縣|屏東縣|宜蘭縣|花蓮縣|臺東縣|澎湖縣|連江縣|金門縣")
+special_type <-str_extract(raw_data$name,pattern="隨時取|優惠|隨")
+afternoon <- str_replace(new_data$clock_type, pattern ="12|13|14|15|16|17|18|19",replacement = "afternoon")
+night <- str_replace(afternoon,pattern = "20|21|22|23|24|1|2|3",replacement = "night")
+clock_type <- str_replace(night,pattern = "4|5|6|7|8|9|10|11",replacement = "morning")
+weekday <- str_replace(week,pattern ="1|2|3|4|5",replacement = "weekday")
+week_type <- str_replace(weekday,pattern="6|7",replacement = "weekend")
+discount_number <- raw_data$invo_price-raw_data$totprice
+new_data <- cbind(raw_data,coffe_type,tep_type,size_type,month_type,clock_type,area_type,special_type,discount_number,week_type)
+
+new_data$size_type[is.na(new_data$size_type)] <- "non"
+new_data$tep_type[is.na(new_data$tep_type)] <- "non"
+new_data$coffe_type[is.na(new_data$coffe_type)] <- "other"
+new_data$special_type[is.na(new_data$special_type)]<- "normal"
+new_data$month_type <- replace(new_data$month_type,new_data$month_type == 4,"April")
+new_data$month_type <- replace(new_data$month_type,new_data$month_type == 5,"May")
+new_data$month_type <- replace(new_data$month_type,new_data$month_type == 6,"June")
+new_data$clock_type <- replace(new_data$clock_type,new_data$clock_type == 0,24)
+
+new_data$coffe_type <- replace(new_data$coffe_type ,new_data$coffe_type =="其他","Other")
+new_data$coffe_type <- replace(new_data$coffe_type ,new_data$coffe_type =="那堤","Latte")
+new_data$coffe_type <- replace(new_data$coffe_type ,new_data$coffe_type =="咖啡星冰樂","Latte")
+new_data$coffe_type <- replace(new_data$coffe_type ,new_data$coffe_type =="雲朵冰搖咖啡","Latte")
+new_data$coffe_type <- replace(new_data$coffe_type ,new_data$coffe_type =="鮮奶咖啡","Latte")
+
+new_data$coffe_type <- replace(new_data$coffe_type ,new_data$coffe_type =="冷萃咖啡","Americano")
+new_data$coffe_type <- replace(new_data$coffe_type ,new_data$coffe_type =="曼巴咖啡","Americano")
+new_data$coffe_type <- replace(new_data$coffe_type ,new_data$coffe_type =="氣泡通寧","Americano")
+new_data$coffe_type <- replace(new_data$coffe_type ,new_data$coffe_type =="濃縮","Americano")
+new_data$coffe_type <- replace(new_data$coffe_type ,new_data$coffe_type =="冰咖啡","Americano")
+new_data$coffe_type <- replace(new_data$coffe_type ,new_data$coffe_type =="西西里","Americano")
+
+new_data$coffe_type <- replace(new_data$coffe_type ,new_data$coffe_type =="美式","Americano")
+new_data$coffe_type <- replace(new_data$coffe_type ,new_data$coffe_type =="拿鐵","Latte")
+#匯出資料
+export(new_data,"all_merge4.csv")
+
+#
+這部分緊育要把當初從all_merge4變成all_merge5的部分的code給放上來
+#
 
 # 只要跑一次存好檔，讀檔比較快
 # all_merge <- read.csv("all_merge5.csv")
