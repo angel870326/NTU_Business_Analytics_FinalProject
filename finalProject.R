@@ -172,7 +172,7 @@ hist(residuals(lm2), main="Histogram of Residuals", xlab = "Residuals")
 qqnorm(residuals(lm2), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
 qqline(residuals(lm2))
 
-# log(logTotprice)
+# log(Y) & Relevel
 coffee2$logTotprice <- log(coffee2$sumtotprice)
 coffee2$area_type <- relevel(factor(coffee2$area_type), ref="臺北市")
 coffee2$channel <- relevel(factor(coffee2$channel), ref="seven")
@@ -193,13 +193,7 @@ qqline(residuals(lm3))
 #---------------------------------------------------------------------#
 #                         Channel Model Building                      #
 #---------------------------------------------------------------------#
-# 將所有類別變數group在一起
-group1<- group_by(coffee, area_type,month_type,week_type,clock_type,channel,coffe_type, size_type,tep_type)%>%
-  summarise(transactions=n(),sumtotprice=sum(totprice),
-            meantotprice=mean(totprice),sumquant=sum(quant),
-            meanquant=mean(quant))
 group1$logTotprice <- log(group1$sumtotprice)
-
 # Reference group relevel
 group1$area_type <- relevel(factor(group1$area_type), ref="臺北市")
 group1$channel <- relevel(factor(group1$channel), ref="seven")
@@ -211,24 +205,22 @@ groupstarbucks <- subset(group1, (group1$channel=="星巴克"))
 grouplouisa <- subset(group1, (group1$channel=="路易莎"))
 groupcama <- subset(group1, (group1$channel=="cama"))
 
-
-
-# 7-11
+#---------------------------------7-11---------------------------------#
 # Model
-lmseven<-lm(logTotprice ~  area_type +coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = groupseven)
-summary(lmseven)
+lmseven <- lm(logTotprice ~ area_type + month_type + week_type + clock_type + coffe_type + size_type + tep_type, data = groupseven)
+summary(groupseven)
 # Residual plots
 par(mfrow=c(1,3))
 plot(fitted(lmseven), residuals(lmseven), main="Residual Plots", xlab="fitted", ylab="Residuals", cex=0.4, pch=19) 
 abline(h=0)
-hist(residuals(lmseven), main="Histogram of Residuals", xlab = "Residuals")
-qqnorm(residuals(lmseven), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
+hist(residuals(lmseven), main="Histogram of Residuals", xlab="Residuals")
+qqnorm(residuals(lmseven), main="QQ-plot of Residuals", ylab="Residuals", cex=0.4, pch=19)
 qqline(residuals(lmseven))
 # 刪除異常值
 groupseven$stuout3 <- rstandard(lmseven)
 groupseven2 <- subset(groupseven, groupseven$stuout3>(-3) & groupseven$stuout3<3)
-# Model2
-lmseven2<-lm(logTotprice ~  area_type +coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = groupseven2)
+# Model 2
+lmseven2 < -lm(logTotprice ~ area_type+month_type+week_type+clock_type+coffe_type+size_type+tep_type, data = groupseven2)
 summary(lmseven2)
 # ANOVA table
 anova(lmseven2)
@@ -236,30 +228,25 @@ anova(lmseven2)
 par(mfrow=c(1,3))
 plot(fitted(lmseven2), residuals(lmseven2), main="Residual Plots", xlab="fitted", ylab="Residuals", cex=0.4, pch=19) 
 abline(h=0)
-hist(residuals(lmseven2), main="Histogram of Residuals", xlab = "Residuals")
+hist(residuals(lmseven2), main="Histogram of Residuals", xlab="Residuals")
 qqnorm(residuals(lmseven2), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
 qqline(residuals(lmseven2))
 
-# 全家
-# 用未剔除異常值的 group1 分 channel
-groupfmart<-subset(group1, (group1$channel=="全家"))
-group1$logTotprice <- log(group1$sumtotprice)
-group1$area_type <- relevel(factor(group1$area_type), ref="臺北市")
-group1$channel <- relevel(factor(group1$channel), ref="seven")
+#----------------------------------全家---------------------------------#
 # Model
-lmfmart <- lm(logTotprice ~ area_type+month_type+week_type+clock_type+coffe_type+size_type+tep_type, data = groupfmart)
+lmfmart <- lm(logTotprice ~ area_type + month_type + week_type + clock_type + coffe_type + size_type + tep_type, data = groupfmart)
 summary(lmfmart)
 # Residual Plots
 par(mfrow=c(1,3))
 plot(fitted(lmfmart), residuals(lmfmart), main="Residual Plots", xlab="fitted", ylab="Residuals", cex=0.4, pch=19) 
 abline(h=0)
-hist(residuals(lmfmart), main="Histogram of Residuals", xlab = "Residuals")
+hist(residuals(lmfmart), main="Histogram of Residuals", xlab="Residuals")
 qqnorm(residuals(lmfmart), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
 qqline(residuals(lmfmart))
-# 找異常值
+# 刪除異常值
 groupfmart$stuout3 <- rstandard(lmfmart)
 groupfmart2 <- subset(groupfmart, groupfmart$stuout3>(-3) & groupfmart$stuout3<3)
-# Model2
+# Model 2
 lmfmart2 <- lm(logTotprice ~ area_type+month_type+week_type+clock_type+coffe_type+size_type+tep_type, data = groupfmart2)
 summary(lmfmart2)
 # ANOVA table
@@ -268,26 +255,26 @@ anova(lmfmart2)
 par(mfrow=c(1,3))
 plot(fitted(lmfmart2), residuals(lmfmart2), main="Residual Plots", xlab="fitted", ylab="Residuals", cex=0.4, pch=19) 
 abline(h=0)
-hist(residuals(lmfmart2), main="Histogram of Residuals", xlab = "Residuals")
+hist(residuals(lmfmart2), main="Histogram of Residuals", xlab="Residuals")
 qqnorm(residuals(lmfmart2), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
 qqline(residuals(lmfmart2))
 
-# 星巴克
+#---------------------------------星巴克--------------------------------#
 # Model
-lmstar<-lm(logTotprice ~  area_type + coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = groupstarbucks)
+lmstar<-lm(logTotprice ~ area_type + month_type + week_type + clock_type + coffe_type + size_type + tep_type, data = groupstarbucks)
 summary(lmstar)
 # Residual plots
 par(mfrow=c(1,3))
 plot(fitted(lmstar), residuals(lmstar), main="Residual Plots", xlab="fitted", ylab="Residuals", cex=0.4, pch=19) 
 abline(h=0)
-hist(residuals(lmstar), main="Histogram of Residuals", xlab = "Residuals")
+hist(residuals(lmstar), main="Histogram of Residuals", xlab="Residuals")
 qqnorm(residuals(lmstar), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
 qqline(residuals(lmstar))
 # 刪除異常值
 groupstarbucks$stuout3 <- rstandard(lmstar)
 groupstarbucks2 <- subset(groupstarbucks, groupstarbucks$stuout3>(-3) & groupstarbucks$stuout3<3)
-# Model2
-lmstar2<-lm(logTotprice ~  area_type + coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = groupstarbucks2)
+# Model 2
+lmstar2<-lm(logTotprice ~ area_type + coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = groupstarbucks2)
 summary(lmstar2)
 # ANOVA table
 anova(lmstar2)
@@ -295,13 +282,13 @@ anova(lmstar2)
 par(mfrow=c(1,3))
 plot(fitted(lmstar2), residuals(lmstar2), main="Residual Plots", xlab="fitted", ylab="Residuals", cex=0.4, pch=19) 
 abline(h=0)
-hist(residuals(lmstar2), main="Histogram of Residuals", xlab = "Residuals")
+hist(residuals(lmstar2), main="Histogram of Residuals", xlab="Residuals")
 qqnorm(residuals(lmstar2), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
 qqline(residuals(lmstar2))
 
-# 路易莎
+#---------------------------------路易莎--------------------------------#
 # Model
-lmlouisa<-lm(logTotprice ~  area_type + coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = grouplouisa)
+lmlouisa<-lm(logTotprice ~ area_type + month_type + week_type + clock_type + coffe_type + size_type + tep_type, data = grouplouisa)
 summary(lmlouisa)
 # Residual plots
 par(mfrow=c(1,3))
@@ -313,8 +300,8 @@ qqline(residuals(lmlouisa))
 # 刪除異常值
 grouplouisa$stuout3 <- rstandard(lmstar)
 grouplouisa2 <- subset(grouplouisa, grouplouisa$stuout3>(-3) & grouplouisa$stuout3<3)
-# Model2
-lmlouisa2<-lm(logTotprice ~  area_type + coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = grouplouisa2)
+# Model 2
+lmlouisa2<-lm(logTotprice ~ area_type + month_type + week_type + clock_type + coffe_type + size_type + tep_type, data = grouplouisa2)
 summary(lmlouisa2)
 # ANOVA table
 anova(lmlouisa2)
@@ -322,25 +309,25 @@ anova(lmlouisa2)
 par(mfrow=c(1,3))
 plot(fitted(lmlouisa2), residuals(lmlouisa2), main="Residual Plots", xlab="fitted", ylab="Residuals", cex=0.4, pch=19) 
 abline(h=0)
-hist(residuals(lmlouisa2), main="Histogram of Residuals", xlab = "Residuals")
+hist(residuals(lmlouisa2), main="Histogram of Residuals", xlab="Residuals")
 qqnorm(residuals(lmlouisa2), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
 qqline(residuals(lmlouisa2))
 
-# cama
+#---------------------------------Cama--------------------------------#
 # Model
-lmcama<-lm(logTotprice ~  area_type +coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = groupcama)
+lmcama<-lm(logTotprice ~ area_type + month_type + week_type + clock_type + coffe_type + size_type + tep_type, data = groupcama)
 summary(lmcama)
 # Residual Plots
 par(mfrow=c(1,3))
 plot(fitted(lmcama), residuals(lmcama), main="Residual Plots", xlab="fitted", ylab="Residuals", cex=0.4, pch=19) 
 abline(h=0)
-hist(residuals(lmcama), main="Histogram of Residuals", xlab = "Residuals")
+hist(residuals(lmcama), main="Histogram of Residuals", xlab="Residuals")
 qqnorm(residuals(lmcama), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
 qqline(residuals(lmcama))
 # 刪除異常值
 groupcama$stuout3 <- rstandard(lmcama)
 groupcama2 <- subset(groupcama, groupcama$stuout3>(-3) & groupcama$stuout3<3)
-# Model2
+# Model 2
 lmcama2<-lm(logTotprice ~  area_type + coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = groupcama2)
 summary(lmcama2)
 # ANOVA table
@@ -349,7 +336,7 @@ anova(lmcama2)
 par(mfrow=c(1,3))
 plot(fitted(lmcama2), residuals(lmcama2), main="Residual Plots", xlab="fitted", ylab="Residuals", cex=0.4, pch=19) 
 abline(h=0)
-hist(residuals(lmcama2), main="Histogram of Residuals", xlab = "Residuals")
+hist(residuals(lmcama2), main="Histogram of Residuals", xlab="Residuals")
 qqnorm(residuals(lmcama2), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
 qqline(residuals(lmcama2))
 
