@@ -1,8 +1,11 @@
-setwd("自己打 working directory")
-#讀進原始資料
-data <- read_csv("D:/R class/NTU_Coffee.csv")
+setwd("...") # 自己的 Working Directory
+#---------------------------------------------------------------------#
+#                             資料整理（1）                             #
+#---------------------------------------------------------------------#
+# 讀進原始資料
+data <- read_csv("NTU_Coffee.csv")
 raw_data <- data.table(data)
-#將原始資料的變數進行分類
+# 將原始資料的變數進行分類
 coffe_type <- str_extract(raw_data$name,pattern="拿鐵|鮮奶咖啡|雲朵冰搖咖啡|咖啡星冰樂|那堤|美式|冷萃咖啡|曼巴咖啡|氣泡通寧|濃縮|冰咖啡|西西里|咖啡豆")
 tep_type <- str_extract(raw_data$name,pattern="冰|熱")
 size_type <- str_extract(raw_data$name,pattern = "特大|大|中|小")
@@ -18,34 +21,36 @@ weekday <- str_replace(week,pattern ="1|2|3|4|5",replacement = "weekday")
 week_type <- str_replace(weekday,pattern="6|7",replacement = "weekend")
 discount_number <- raw_data$invo_price-raw_data$totprice
 new_data <- cbind(raw_data,coffe_type,tep_type,size_type,month_type,clock_type,area_type,special_type,discount_number,week_type)
-
+# 處理空值
 new_data$size_type[is.na(new_data$size_type)] <- "non"
 new_data$tep_type[is.na(new_data$tep_type)] <- "non"
 new_data$coffe_type[is.na(new_data$coffe_type)] <- "other"
 new_data$special_type[is.na(new_data$special_type)]<- "normal"
+# month_type 由數字改成文字 & clock_type 0:00 改成 24:00
 new_data$month_type <- replace(new_data$month_type,new_data$month_type == 4,"April")
 new_data$month_type <- replace(new_data$month_type,new_data$month_type == 5,"May")
 new_data$month_type <- replace(new_data$month_type,new_data$month_type == 6,"June")
 new_data$clock_type <- replace(new_data$clock_type,new_data$clock_type == 0,24)
-
+# coffe_type 分類
 new_data$coffe_type <- replace(new_data$coffe_type ,new_data$coffe_type =="其他","Other")
 new_data$coffe_type <- replace(new_data$coffe_type ,new_data$coffe_type =="那堤","Latte")
 new_data$coffe_type <- replace(new_data$coffe_type ,new_data$coffe_type =="咖啡星冰樂","Latte")
 new_data$coffe_type <- replace(new_data$coffe_type ,new_data$coffe_type =="雲朵冰搖咖啡","Latte")
 new_data$coffe_type <- replace(new_data$coffe_type ,new_data$coffe_type =="鮮奶咖啡","Latte")
-
 new_data$coffe_type <- replace(new_data$coffe_type ,new_data$coffe_type =="冷萃咖啡","Americano")
 new_data$coffe_type <- replace(new_data$coffe_type ,new_data$coffe_type =="曼巴咖啡","Americano")
 new_data$coffe_type <- replace(new_data$coffe_type ,new_data$coffe_type =="氣泡通寧","Americano")
 new_data$coffe_type <- replace(new_data$coffe_type ,new_data$coffe_type =="濃縮","Americano")
 new_data$coffe_type <- replace(new_data$coffe_type ,new_data$coffe_type =="冰咖啡","Americano")
 new_data$coffe_type <- replace(new_data$coffe_type ,new_data$coffe_type =="西西里","Americano")
-
 new_data$coffe_type <- replace(new_data$coffe_type ,new_data$coffe_type =="美式","Americano")
 new_data$coffe_type <- replace(new_data$coffe_type ,new_data$coffe_type =="拿鐵","Latte")
-#匯出資料
+# 匯出資料
 export(new_data,"all_merge4.csv")
 
+#---------------------------------------------------------------------#
+#                             資料整理（2）                             #
+#---------------------------------------------------------------------#
 # 因發現7-11和全家的資料中仍有其他優惠組合，故另手動抓取關鍵字排除 詳見附件
 special <- read.csv("咖啡品項與價格 - 需排除品項.csv") # 匯入整理好需排除的咖啡品項csv
 special <- data.table(special)
@@ -53,6 +58,9 @@ coffee$special_type <- special$name[match(coffee$name, special$name)] # fill and
 coffee$special_type <- coffee$special_type %>% replace_na('normal') # 將非優惠品項設為normal
 write.csv(coffee,file="all_merge5.csv",row.names = FALSE)。# 匯出merge5，並使用本檔案分析
 
+#---------------------------------------------------------------------#
+#                             資料整理（3）                             #
+#---------------------------------------------------------------------#
 # 只要跑一次存好檔，讀檔比較快
 # all_merge <- read.csv("all_merge5.csv")
 # library(dplyr)
