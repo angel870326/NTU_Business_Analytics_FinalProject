@@ -85,21 +85,10 @@ saveRDS(coffee, file = "coffee.rds")  # 節省後續分析的讀檔時間
 #                         EDA & Model Building                        #
 #---------------------------------------------------------------------#
 coffee <- readRDS("coffee.rds")
-coffee <- subset(coffee,coffee$size_type!="non"&coffee$tep_type!="non")
+coffee <- subset(coffee,coffee$size_type!="non"&coffee$tep_type!="non")  # 刪除 size_type 為 non 或是 tep_type 為 non 的資料
 
-# 不同 channel
-summary(all_merge$channel)
-channel_711 <- subset(all_merge, (all_merge$channel=="7-11"))
-channel_louisa <- subset(all_merge, (all_merge$channel=="路易莎"))
-channel_family <- subset(all_merge, (all_merge$channel=="全家"))
-channel_starbucks <- subset(all_merge, (all_merge$channel=="星巴克"))
-channel_cama <- subset(all_merge, (all_merge$channel=="cama"))
-
-# 觀察資料
-groupsort<- group_by(coffee, channel)%>%
-  summarise(transactions=n(),mean_unitprice=mean(uniprice),sum_totalprice=sum(totprice),
-            mean_totalprice=mean(totprice),sum_quantity=sum(quant),
-            mean_quantity=mean(quant))
+# 將相同的銷售地區、咖啡類型、咖啡溫度、咖啡大小、銷售月份、銷售時點以及銷售日為平日或假日的資料合併
+groupsort<- group_by(coffee, channel)%>%summarise(transactions=n(),mean_unitprice=mean(uniprice),sum_totalprice=sum(totprice),mean_totalprice=mean(totprice),sum_quantity=sum(quant),mean_quantity=mean(quant))
 
 # EDA
 library(ggplot2)
