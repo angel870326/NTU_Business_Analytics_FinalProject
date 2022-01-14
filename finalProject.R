@@ -46,9 +46,12 @@ new_data$coffe_type <- replace(new_data$coffe_type ,new_data$coffe_type =="拿�
 #匯出資料
 export(new_data,"all_merge4.csv")
 
-#
-這部分緊育要把當初從all_merge4變成all_merge5的部分的code給放上來
-#
+# 因發現7-11和全家的資料中仍有其他優惠組合，故另手動抓取關鍵字排除 詳見附件
+special <- read.csv("咖啡品項與價格 - 需排除品項.csv") # 匯入整理好需排除的咖啡品項csv
+special <- data.table(special)
+coffee$special_type <- special$name[match(coffee$name, special$name)] # fill and match 品項name，並標上優惠代碼
+coffee$special_type <- coffee$special_type %>% replace_na('normal') # 將非優惠品項設為normal
+write.csv(coffee,file="all_merge5.csv",row.names = FALSE)。# 匯出merge5，並使用本檔案分析
 
 # 只要跑一次存好檔，讀檔比較快
 # all_merge <- read.csv("all_merge5.csv")
