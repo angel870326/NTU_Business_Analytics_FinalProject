@@ -54,9 +54,11 @@ export(new_data,"all_merge4.csv")
 # 因發現7-11和全家的資料中仍有其他優惠組合，故另手動抓取關鍵字排除 詳見附件
 special <- read.csv("咖啡品項與價格 - 需排除品項.csv") # 匯入整理好需排除的咖啡品項csv
 special <- data.table(special)
-coffee$special_type <- special$name[match(coffee$name, special$name)] # fill and match 品項name，並標上優惠代碼
-coffee$special_type <- coffee$special_type %>% replace_na('normal') # 將非優惠品項設為normal
-write.csv(coffee,file="all_merge5.csv",row.names = FALSE)。# 匯出merge5，並使用本檔案分析
+coffee <- read_csv("all_merge4.csv")
+coffee$special_type <- special$name[match(coffee$name, special$name)] # fill and match 品項 name，並標上優惠代碼
+coffee$special_type <- coffee$special_type %>% replace_na('normal') # 將非優惠品項設為 normal
+# 匯出資料
+write.csv(coffee,file="all_merge5.csv",row.names = FALSE)
 
 #---------------------------------------------------------------------#
 #                             資料整理（3）                             #
@@ -71,12 +73,18 @@ coffee <- subset(coffee, select = -special_type )
 # 刪除 uniprice > 200 的 observaitons
 coffee <- subset(coffee, (coffee$uniprice<=200))
 saveRDS(coffee, file = "coffee.rds")
-# coffee <- subset(coffee, select = -c(15) ) # 刪 number
-# coffee[which(coffee$tep_type =="non"&coffee$channel =="星巴克"),"tep_type"] <- "熱"
-# coffee <- subset(coffee,coffee$quant*coffee$uniprice==coffee$totprice)
-# saveRDS(coffee, file = "coffee_withoutNum.rds")
+# 由於星巴克未標注冷熱的飲品皆為熱飲（冷飲才會額外標注），因此將星巴克 tep_type 為 "non" 者改為 "熱"
+coffee[which(coffee$tep_type =="non"&coffee$channel =="星巴克"),"tep_type"] <- "熱"
+# 只取出 quant*uniprice=totprice 的 observations，其他視為有誤之資料
+coffee <- subset(coffee,coffee$quant*coffee$uniprice==coffee$totprice)
+# 匯出檔案
+write.csv(coffee, file = "coffee.csv")
+saveRDS(coffee, file = "coffee.rds")  # 節省後續分析的讀檔時間
 
-coffee <- readRDS("coffee_withoutNum.rds")
+#---------------------------------------------------------------------#
+#                         EDA & Model Building                        #
+#---------------------------------------------------------------------#
+coffee <- readRDS("coffee.rds")
 coffee <- subset(coffee,coffee$size_type!="non"&coffee$tep_type!="non")
 
 # 不同 channel
