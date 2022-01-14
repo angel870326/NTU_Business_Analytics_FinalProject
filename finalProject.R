@@ -78,137 +78,71 @@ coffee[which(coffee$tep_type =="non"&coffee$channel =="星巴克"),"tep_type"] <
 # 只取出 quant*uniprice=totprice 的 observations，其他視為有誤之資料
 coffee <- subset(coffee,coffee$quant*coffee$uniprice==coffee$totprice)
 # 匯出檔案
-write.csv(coffee, file = "coffee.csv")
-saveRDS(coffee, file = "coffee.rds")  # 節省後續分析的讀檔時間
+# saveRDS(coffee, file = "coffee.rds")  # 節省後續分析的讀檔時間
+write.csv(coffee, file = "coffee.csv")  # 最終版資料集
 
 #---------------------------------------------------------------------#
-#                                EDA                                  #
+#                      Preprocessing for Analysis                     #
 #---------------------------------------------------------------------#
-coffee <- readRDS("coffee.rds")
+# coffee <- readRDS("coffee.rds")
+coffee <- read.csv("coffee.csv")
 coffee <- subset(coffee,coffee$size_type!="non"&coffee$tep_type!="non")  # 刪除 size_type 為 non 或是 tep_type 為 non 的資料
 
 # 將相同的銷售地區、咖啡類型、咖啡溫度、咖啡大小、銷售月份、銷售時點以及銷售日為平日或假日的資料合併
 groupsort<- group_by(coffee, channel)%>%summarise(transactions=n(),mean_unitprice=mean(uniprice),sum_totalprice=sum(totprice),mean_totalprice=mean(totprice),sum_quantity=sum(quant),mean_quantity=mean(quant))
 
-# EDA
+#---------------------------------------------------------------------#
+#                                 EDA                                 #
+#---------------------------------------------------------------------#
 library(ggplot2)
 library(dplyr)
-groupchuni <- group_by(coffee, channel, uniprice)%>%
-  summarise(transactions=n(),sumtotprice=sum(totprice),
-            meantotprice=mean(totprice),sumquant=sum(quant),
-            meanquant=mean(quant))
-qplot(groupchuni$channel,groupchuni$uniprice, data = groupchuni ,xlab="ccc",ylab ="uniprice", 
-      main ="銷售價")+theme(plot.title=element_text(hjust = 0.5))
-plot(groupchuni$channel,groupchuni$uniprice,ylab="Unit Price", xlab="Channel",main="通路與單價的關係")
+groupchuni <- group_by(coffee,channel,uniprice)%>%summarise(transactions=n(),sumtotprice=sum(totprice),meantotprice=mean(totprice),sumquant=sum(quant),meanquant=mean(quant))
+qplot(groupchuni$channel,groupchuni$uniprice, data=groupchuni,xlab="ccc",ylab="uniprice",main ="銷售價")+theme(plot.title=element_text(hjust=0.5))
+plot(groupchuni$channel,groupchuni$uniprice,ylab="Unit Price",xlab="Channel",main="通路與單價的關係")
 
-groupNUM<- group_by(coffee, area_type, number)%>%
-  summarise(transactions=n(),sumtotprice=sum(totprice),
-            meantotprice=mean(totprice),sumquant=sum(quant),
-            meanquant=mean(quant))
+grouptepcoff <- group_by(coffee,tep_type,coffe_type)%>%summarise(transactions=n(),sumtotprice=sum(totprice),meantotprice=mean(totprice),sumquant=sum(quant),meanquant=mean(quant))
+qplot(grouptepcoff$tep_type,grouptepcoff$sumtotprice,data=grouptepcoff,color=coffe_type,xlab="Temperature",ylab="Quantity",main="咖啡類型和溫度的關係")+theme(plot.title=element_text(hjust=0.5))
 
-qplot(coffee$area_type,coffee$number, data = coffee, color=channel,xlab="Area",ylab ="Store Number", 
-      main ="各地區的門市數")+theme(plot.title=element_text(hjust = 0.5),axis.text.x = element_text(angle = 270, vjust = 0.5))
+grouptepsize <- group_by(coffee,size_type,tep_type)%>%summarise(transactions=n(),sumtotprice=sum(totprice),meantotprice=mean(totprice),sumquant=sum(quant),meanquant=mean(quant))
+gplot(grouptepsize,aes(x=factor(grouptepsize$size_type),y=grouptepsize$sumquant,colour=tep_type,group=grouptepsize$tep_type))+geom_line(size=1)+labs(x="Size Type",y="Quantity",title="溫度和大小的關係")+theme(plot.title=element_text(hjust=0.5)) 
+grouptepsize$size_type=factor(grouptepsize$size_type,levels=c("小","中","大","特大"))
 
-qplot(groupNUM$area_type,groupNUM$number, data = groupNUM, color=channel,xlab="Area",ylab ="Store Number", 
-      main ="各地區的門市數")+theme(plot.title=element_text(hjust = 0.5),axis.text.x = element_text(angle = 270, vjust = 0.5))
+grouptepclock <- group_by(coffee,clock_type,tep_type)%>%summarise(transactions=n(),sumtotprice=sum(totprice),meantotprice=mean(totprice),sumquant=sum(quant),meanquant=mean(quant))
+qplot(grouptepclock$tep_type,grouptepclock$sumtotprice,data=grouptepclock,color=clock_type,xlab="Temperature",ylab="Totol Price",main ="溫度和時間的關係")+theme(plot.title=element_text(hjust=0.5))
 
-qplot(income$county,income$disposable_income, data = income, xlab="Area",ylab ="Disposable Income", 
-      main ="每人每月可支配所得")+theme(plot.title=element_text(hjust = 0.5),axis.text.x = element_text(angle = 270, vjust = 0.5))
+grouparea <- group_by(coffee,channel,area_type)%>%summarise(transactions=n(),sumtotprice=sum(totprice),meantotprice=mean(totprice),sumquant=sum(quant),meanquant=mean(quant))
+qplot(grouparea$area_type,grouparea$sumtotprice,data=grouparea,color=channel,xlab="Area",ylab="Totol Price",main="地區與總銷售額關係")+theme(plot.title=element_text(hjust=0.5),axis.text.x=element_text(angle=270,vjust=0.5))
 
-grouptepcoff<- group_by(coffee, tep_type, coffe_type)%>%
-  summarise(transactions=n(),sumtotprice=sum(totprice),
-            meantotprice=mean(totprice),sumquant=sum(quant),
-            meanquant=mean(quant))
-qplot(grouptepcoff$tep_type,grouptepcoff$sumtotprice, data = grouptepcoff, color=coffe_type,xlab="Temperature",ylab ="Quantity", 
-      main ="咖啡類型和溫度的關係")+theme(plot.title=element_text(hjust = 0.5))
+groupuni <- group_by(coffee,channel,uniprice)%>%summarise(transactions=n(),sumtotprice=sum(totprice),meantotprice=mean(totprice),sumquant=sum(quant),meanquant=mean(quant))
+qplot(groupuni$uniprice,groupuni$sumtotprice,data=groupuni,color=channel,xlab="Unit Price",ylab="Totol Price",main="單價與總銷售額關係")+theme(plot.title=element_text(hjust=0.5))
 
-grouptepsize<- group_by(coffee, size_type, tep_type)%>%
-  summarise(transactions=n(),sumtotprice=sum(totprice),
-            meantotprice=mean(totprice),sumquant=sum(quant),
-            meanquant=mean(quant))
-gplot(grouptepsize, aes(x=factor(grouptepsize$size_type), y=grouptepsize$sumquant, colour=tep_type,group=grouptepsize$tep_type)) + 
-  geom_line(size=1)+ labs(x="Size Type", y="Quantity", title="溫度和大小的關係")+
-  theme(plot.title = element_text(hjust = 0.5)) 
-grouptepsize$size_type=factor(grouptepsize$size_type, levels=c("小", "中", "大", "特大"))
+groupcoffe_type <-group_by(coffee,channel,coffe_type)%>%summarise(transactions=n(),sumtotprice=sum(totprice),sumquant=sum(quant),meantotprice=mean(totprice))
+qplot(groupcoffe_type$coffe_type,groupcoffe_type$sumquant,data=groupcoffe_type,color=channel,xlab="Coffee Type",ylab="Quantity",main="不同咖啡類型的銷售量")+theme(plot.title=element_text(hjust=0.5))
+qplot(groupcoffe_type$coffe_type,groupcoffe_type$sumtotprice,data=groupcoffe_type,color=channel,xlab="Coffee Type",ylab="Total Price",main="不同咖啡類型的銷售總額")+theme(plot.title=element_text(hjust=0.5))
 
-grouptepclock<- group_by(coffee, clock_type, tep_type)%>%
-  summarise(transactions=n(),sumtotprice=sum(totprice),
-            meantotprice=mean(totprice),sumquant=sum(quant),
-            meanquant=mean(quant))
-qplot(grouptepclock$tep_type,grouptepclock$sumtotprice, data = grouptepclock, color=clock_type,xlab="Temperature",ylab ="Totol Price", 
-      main ="溫度和時間的關係")+theme(plot.title=element_text(hjust = 0.5))
+groupmonth_type <-group_by(coffee,channel,month_type)%>%summarise(transactions=n(),sumtotprice=sum(totprice),sumquant=sum(quant),meantotprice=mean(totprice))
+qplot(groupmonth_type$month_type,groupmonth_type$sumquant,data=groupmonth_type,color=channel,xlab="Month",ylab="Quantity",main="不同月份的銷售量")+theme(plot.title=element_text(hjust=0.5))
+qplot(groupmonth_type$month_type,groupmonth_type$sumtotprice,data=groupmonth_type,color=channel,xlab="Month",ylab="Total Price",main="不同月份的銷售總額")+theme(plot.title=element_text(hjust=0.5))
 
-grouparea<- group_by(coffee, channel, area_type)%>%
-  summarise(transactions=n(),sumtotprice=sum(totprice),
-            meantotprice=mean(totprice),sumquant=sum(quant),
-            meanquant=mean(quant))
-qplot(grouparea$area_type,grouparea$sumtotprice, data = grouparea, color=channel,xlab="Area",ylab ="Totol Price", 
-      main ="地區與總銷售額關係")+theme(plot.title=element_text(hjust = 0.5),axis.text.x = element_text(angle = 270, vjust = 0.5))
+groupsize <- group_by(coffee,channel,size_type)%>%summarise(transactions=n(),sumtotprice=sum(totprice),meantotprice=mean(totprice),sumquant=sum(quant),meanquant=mean(quant))
+qplot(groupsize$size_type,groupsize$sumquant,data=groupsize,color=channel,xlab="Size Type",ylab="Quantity",main="不同咖啡大小的銷售量")+theme(plot.title=element_text(hjust=0.5))
+qplot(groupsize$size_type,groupsize$sumtotprice,data=groupsize,color=channel,xlab="Size Type",ylab="Total Price",main="不同咖啡大小的銷售總額")+theme(plot.title=element_text(hjust=0.5))
 
-groupuni<- group_by(coffee, channel, uniprice)%>%
-  summarise(transactions=n(),sumtotprice=sum(totprice),
-            meantotprice=mean(totprice),sumquant=sum(quant),
-            meanquant=mean(quant))
-qplot(groupuni$uniprice,groupuni$sumtotprice, data = groupuni, color=channel,xlab="Unit Price",ylab ="Totol Price", 
-      main ="單價與總銷售額關係")+theme(plot.title=element_text(hjust = 0.5))
+grouptep_type <- group_by(coffee,channel,tep_type)%>%summarise(transactions=n(),sumtotprice=sum(totprice),sumquant=sum(quant),meantotprice=mean(totprice))
+qplot(grouptep_type$tep_type,grouptep_type$sumquant,data=grouptep_type,color=channel,xlab="Temperature",ylab="Quantity",main="不同咖啡溫度的銷售量")+theme(plot.title=element_text(hjust=0.5))
+qplot(grouptep_type$tep_type,grouptep_type$sumtotprice,data=grouptep_type,color=channel,xlab="Temperature",ylab="Total Price",main="不同咖啡溫度的銷售總額")+theme(plot.title=element_text(hjust=0.5))
 
-groupcoffe_type<-group_by(coffee,channel,coffe_type)%>%
-  summarise(transactions=n(),sumtotprice=sum(totprice),sumquant=sum(quant),
-            meantotprice=mean(totprice))
-qplot(groupcoffe_type$coffe_type, groupcoffe_type$sumquant, data = groupcoffe_type, 
-      color=channel,xlab="Coffee Type",ylab ="Quantity", 
-      main ="不同咖啡類型的銷售量")+theme(plot.title=element_text(hjust = 0.5))
-qplot(groupcoffe_type$coffe_type, groupcoffe_type$sumtotprice, data = groupcoffe_type, 
-      color=channel,xlab="Coffee Type",ylab ="Total Price", 
-      main ="不同咖啡類型的銷售總額")+theme(plot.title=element_text(hjust = 0.5))
+groupweek <- group_by(coffee,channel,week_type)%>%summarise(transactions=n(),sumtotprice=sum(totprice),meantotprice=mean(totprice),sumquant=sum(quant),meanquant=mean(quant))
+qplot(groupweek$week_type,groupweek$sumquant,data=groupweek,color=channel,xlab="Week Type",ylab="Quantity",main="平日、假日的銷售量")+theme(plot.title=element_text(hjust=0.5))
+qplot(groupweek$week_type,groupweek$sumtotprice,data=groupweek,color=channel,xlab="Week Type",ylab="Total Price",main="平日、假日的銷售總額")+theme(plot.title=element_text(hjust=0.5))
 
-groupmonth_type<-group_by(coffee,channel,month_type)%>%
-  summarise(transactions=n(),sumtotprice=sum(totprice),sumquant=sum(quant),
-            meantotprice=mean(totprice))
-qplot(groupmonth_type$month_type, groupmonth_type$sumquant, data = groupmonth_type, 
-      color=channel,xlab="Month",ylab ="Quantity", 
-      main ="不同月份的銷售量")+theme(plot.title=element_text(hjust = 0.5))
-qplot(groupmonth_type$month_type, groupmonth_type$sumtotprice, data = groupmonth_type, 
-      color=channel,xlab="Month",ylab ="Total Price", 
-      main ="不同月份的銷售總額")+theme(plot.title=element_text(hjust = 0.5))
+groupclock_type <- group_by(coffee,channel,clock_type)%>%summarise(transactions=n(),sumtotprice=sum(totprice),sumquant=sum(quant),meantotprice=mean(totprice))
+qplot(groupclock_type$clock_type,groupclock_type$sumtotprice,data=groupclock_type,color=channel,xlab="Clock",ylab="Total Price",main="不同時點的銷售總額")+theme(plot.title=element_text(hjust=0.5))
+qplot(groupclock_type$clock_type,groupclock_type$sumquant,data=groupclock_type,color=channel,xlab="Clock",ylab="Quantity",main="不同時點的銷售量")+theme(plot.title=element_text(hjust=0.5))
 
-
-groupsize <- group_by(coffee, channel, size_type)%>%
-  summarise(transactions=n(),sumtotprice=sum(totprice),
-            meantotprice=mean(totprice),sumquant=sum(quant),
-            meanquant=mean(quant))
-qplot(groupsize$size_type,groupsize$sumquant, data = groupsize, color=channel,xlab="Size Type",ylab ="Quantity", 
-      main ="不同咖啡大小的銷售量")+theme(plot.title=element_text(hjust = 0.5))
-qplot(groupsize$size_type,groupsize$sumtotprice, data = groupsize, color=channel,xlab="Size Type",ylab ="Total Price", 
-      main ="不同咖啡大小的銷售總額")+theme(plot.title=element_text(hjust = 0.5))
-
-grouptep_type<-group_by(coffee,channel,tep_type)%>%
-  summarise(transactions=n(),sumtotprice=sum(totprice),sumquant=sum(quant),
-            meantotprice=mean(totprice))
-qplot(grouptep_type$tep_type,grouptep_type$sumquant, data = grouptep_type, color=channel,xlab="Temperature",ylab ="Quantity", 
-      main ="不同咖啡溫度的銷售量")+theme(plot.title=element_text(hjust = 0.5))
-qplot(grouptep_type$tep_type,grouptep_type$sumtotprice, data = grouptep_type, color=channel,xlab="Temperature",ylab ="Total Price", 
-      main ="不同咖啡溫度的銷售總額")+theme(plot.title=element_text(hjust = 0.5))
-
-groupweek <- group_by(coffee, channel, week_type)%>%
-  summarise(transactions=n(),sumtotprice=sum(totprice),
-            meantotprice=mean(totprice),sumquant=sum(quant),
-            meanquant=mean(quant))
-qplot(groupweek$week_type,groupweek$sumquant, data = groupweek, color=channel,xlab="Week Type",ylab ="Quantity", 
-      main ="平日、假日的銷售量")+theme(plot.title=element_text(hjust = 0.5))
-qplot(groupweek$week_type,groupweek$sumtotprice, data = groupweek, color=channel,xlab="Week Type",ylab ="Total Price", 
-      main ="平日、假日的銷售總額")+theme(plot.title=element_text(hjust = 0.5))
-
-groupclock_type<-group_by(coffee,channel,clock_type)%>%
-  summarise(transactions=n(),sumtotprice=sum(totprice),sumquant=sum(quant),
-            meantotprice=mean(totprice))
-qplot(groupclock_type$clock_type, groupclock_type$sumtotprice, data = groupclock_type, 
-      color=channel,xlab="Clock",ylab ="Total Price", 
-      main ="不同時點的銷售總額")+theme(plot.title=element_text(hjust = 0.5))
-qplot(groupclock_type$clock_type, groupclock_type$sumquant, data = groupclock_type, 
-      color=channel,xlab="Clock",ylab ="Quantity", 
-      main ="不同時點的銷售量")+theme(plot.title=element_text(hjust = 0.5))
-
+#---------------------------------------------------------------------#
+#                             Model Building                          #
+#---------------------------------------------------------------------#
 # Model（月份合併）
 library(dplyr)
 group1<- group_by(coffee, area_type,month_type,week_type,clock_type,channel,coffe_type, size_type,tep_type)%>%
@@ -277,6 +211,35 @@ groupfmart <- subset(group1, (group1$channel=="全家"))
 groupstarbucks <- subset(group1, (group1$channel=="星巴克"))
 groupcama <- subset(group1, (group1$channel=="cama"))
 
+
+
+# 7-11
+# Model
+lmseven<-lm(logTotprice ~  area_type +coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = groupseven)
+summary(lmseven)
+# Residual plots
+par(mfrow=c(1,3))
+plot(fitted(lmseven), residuals(lmseven), main="Residual Plots", xlab="fitted", ylab="Residuals", cex=0.4, pch=19) 
+abline(h=0)
+hist(residuals(lmseven), main="Histogram of Residuals", xlab = "Residuals")
+qqnorm(residuals(lmseven), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
+qqline(residuals(lmseven))
+# 刪除異常值
+groupseven$stuout3 <- rstandard(lmseven)
+groupseven2 <- subset(groupseven, groupseven$stuout3>(-3) & groupseven$stuout3<3)
+# Model2
+lmseven2<-lm(logTotprice ~  area_type +coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = groupseven2)
+summary(lmseven2)
+# ANOVA table
+anova(lmseven2)
+# Residual plots
+par(mfrow=c(1,3))
+plot(fitted(lmseven2), residuals(lmseven2), main="Residual Plots", xlab="fitted", ylab="Residuals", cex=0.4, pch=19) 
+abline(h=0)
+hist(residuals(lmseven2), main="Histogram of Residuals", xlab = "Residuals")
+qqnorm(residuals(lmseven2), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
+qqline(residuals(lmseven2))
+
 # 全家
 # 用未剔除異常值的 group1 分 channel
 groupfmart<-subset(group1, (group1$channel=="全家"))
@@ -308,60 +271,6 @@ abline(h=0)
 hist(residuals(lmfmart2), main="Histogram of Residuals", xlab = "Residuals")
 qqnorm(residuals(lmfmart2), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
 qqline(residuals(lmfmart2))
-
-# 7-11
-# Model
-lmseven<-lm(logTotprice ~  area_type +coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = groupseven)
-summary(lmseven)
-# Residual plots
-par(mfrow=c(1,3))
-plot(fitted(lmseven), residuals(lmseven), main="Residual Plots", xlab="fitted", ylab="Residuals", cex=0.4, pch=19) 
-abline(h=0)
-hist(residuals(lmseven), main="Histogram of Residuals", xlab = "Residuals")
-qqnorm(residuals(lmseven), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
-qqline(residuals(lmseven))
-# 刪除異常值
-groupseven$stuout3 <- rstandard(lmseven)
-groupseven2 <- subset(groupseven, groupseven$stuout3>(-3) & groupseven$stuout3<3)
-# Model2
-lmseven2<-lm(logTotprice ~  area_type +coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = groupseven2)
-summary(lmseven2)
-# ANOVA table
-anova(lmseven2)
-# Residual plots
-par(mfrow=c(1,3))
-plot(fitted(lmseven2), residuals(lmseven2), main="Residual Plots", xlab="fitted", ylab="Residuals", cex=0.4, pch=19) 
-abline(h=0)
-hist(residuals(lmseven2), main="Histogram of Residuals", xlab = "Residuals")
-qqnorm(residuals(lmseven2), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
-qqline(residuals(lmseven2))
-
-# cama
-# Model
-lmcama<-lm(logTotprice ~  area_type +coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = groupcama)
-summary(lmcama)
-# Residual Plots
-par(mfrow=c(1,3))
-plot(fitted(lmcama), residuals(lmcama), main="Residual Plots", xlab="fitted", ylab="Residuals", cex=0.4, pch=19) 
-abline(h=0)
-hist(residuals(lmcama), main="Histogram of Residuals", xlab = "Residuals")
-qqnorm(residuals(lmcama), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
-qqline(residuals(lmcama))
-# 刪除異常值
-groupcama$stuout3 <- rstandard(lmcama)
-groupcama2 <- subset(groupcama, groupcama$stuout3>(-3) & groupcama$stuout3<3)
-# Model2
-lmcama2<-lm(logTotprice ~  area_type + coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = groupcama2)
-summary(lmcama2)
-# ANOVA table
-anova(lmcama2)
-# Residual plots
-par(mfrow=c(1,3))
-plot(fitted(lmcama2), residuals(lmcama2), main="Residual Plots", xlab="fitted", ylab="Residuals", cex=0.4, pch=19) 
-abline(h=0)
-hist(residuals(lmcama2), main="Histogram of Residuals", xlab = "Residuals")
-qqnorm(residuals(lmcama2), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
-qqline(residuals(lmcama2))
 
 # 星巴克
 # Model
@@ -416,3 +325,31 @@ abline(h=0)
 hist(residuals(lmlouisa2), main="Histogram of Residuals", xlab = "Residuals")
 qqnorm(residuals(lmlouisa2), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
 qqline(residuals(lmlouisa2))
+
+# cama
+# Model
+lmcama<-lm(logTotprice ~  area_type +coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = groupcama)
+summary(lmcama)
+# Residual Plots
+par(mfrow=c(1,3))
+plot(fitted(lmcama), residuals(lmcama), main="Residual Plots", xlab="fitted", ylab="Residuals", cex=0.4, pch=19) 
+abline(h=0)
+hist(residuals(lmcama), main="Histogram of Residuals", xlab = "Residuals")
+qqnorm(residuals(lmcama), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
+qqline(residuals(lmcama))
+# 刪除異常值
+groupcama$stuout3 <- rstandard(lmcama)
+groupcama2 <- subset(groupcama, groupcama$stuout3>(-3) & groupcama$stuout3<3)
+# Model2
+lmcama2<-lm(logTotprice ~  area_type + coffe_type + tep_type + size_type + month_type + clock_type + week_type, data = groupcama2)
+summary(lmcama2)
+# ANOVA table
+anova(lmcama2)
+# Residual plots
+par(mfrow=c(1,3))
+plot(fitted(lmcama2), residuals(lmcama2), main="Residual Plots", xlab="fitted", ylab="Residuals", cex=0.4, pch=19) 
+abline(h=0)
+hist(residuals(lmcama2), main="Histogram of Residuals", xlab = "Residuals")
+qqnorm(residuals(lmcama2), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
+qqline(residuals(lmcama2))
+
