@@ -61,17 +61,16 @@ write.csv(coffee,file="all_merge5.csv",row.names = FALSE)。# 匯出merge5，並
 #---------------------------------------------------------------------#
 #                             資料整理（3）                             #
 #---------------------------------------------------------------------#
-# 只要跑一次存好檔，讀檔比較快
-# all_merge <- read.csv("all_merge5.csv")
-# library(dplyr)
-# all_merge <- distinct(all_merge)
-# all_merge <- subset(all_merge, select = -c(2,3,5,6,12) )
-# saveRDS(all_merge, file = "all_merge_withNames.rds")
-# all_merge <- subset(all_merge, select = -c(3) ) # names
-# coffee <- subset(all_merge, (all_merge$special_type=="normal"))
-# coffee <- subset(coffee, (coffee$uniprice<=200))  # 刪uniprice>200
-# coffee <- subset(coffee, select = -c(12) ) # 刪 special_type
-# saveRDS(coffee, file = "coffee.rds")
+all_merge <- read.csv("all_merge5.csv")
+library(dplyr)
+all_merge <- distinct(all_merge)  # 刪除重複的 observaitons
+all_merge <- subset(all_merge, select = -c(datetime_UTC_8, deviceid, invo_idx, id, county_district, names))  # 刪除部分變數
+# 取出 special_type 為 "normal" 的 observations
+coffee <- subset(all_merge, (all_merge$special_type=="normal"))
+coffee <- subset(coffee, select = -special_type )
+# 刪除 uniprice > 200 的 observaitons
+coffee <- subset(coffee, (coffee$uniprice<=200))
+saveRDS(coffee, file = "coffee.rds")
 # coffee <- subset(coffee, select = -c(15) ) # 刪 number
 # coffee[which(coffee$tep_type =="non"&coffee$channel =="星巴克"),"tep_type"] <- "熱"
 # coffee <- subset(coffee,coffee$quant*coffee$uniprice==coffee$totprice)
