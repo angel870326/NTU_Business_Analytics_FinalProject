@@ -88,12 +88,13 @@ write.csv(coffee, file = "coffee.csv")  # 最終版資料集
 coffee <- read.csv("coffee.csv")
 coffee <- subset(coffee,coffee$size_type!="non"&coffee$tep_type!="non")  # 刪除 size_type 為 non 或是 tep_type 為 non 的資料
 
-# 將相同的銷售地區、咖啡類型、咖啡溫度、咖啡大小、銷售月份、銷售時點以及銷售日為平日或假日的資料合併
-groupsort<- group_by(coffee, channel)%>%summarise(transactions=n(),mean_unitprice=mean(uniprice),sum_totalprice=sum(totprice),mean_totalprice=mean(totprice),sum_quantity=sum(quant),mean_quantity=mean(quant))
-
 #---------------------------------------------------------------------#
 #                                 EDA                                 #
 #---------------------------------------------------------------------#
+
+# 
+groupsort <- group_by(coffee, channel)%>%summarise(transactions=n(),mean_unitprice=mean(uniprice),sum_totalprice=sum(totprice),mean_totalprice=mean(totprice),sum_quantity=sum(quant),mean_quantity=mean(quant))
+
 library(ggplot2)
 library(dplyr)
 groupchuni <- group_by(coffee,channel,uniprice)%>%summarise(transactions=n(),sumtotprice=sum(totprice),meantotprice=mean(totprice),sumquant=sum(quant),meanquant=mean(quant))
@@ -143,10 +144,9 @@ qplot(groupclock_type$clock_type,groupclock_type$sumquant,data=groupclock_type,c
 #---------------------------------------------------------------------#
 #                             Model Building                          #
 #---------------------------------------------------------------------#
-# Model（月份合併）
+# 依照月份合併
 library(dplyr)
-group1<- group_by(coffee, area_type,month_type,week_type,clock_type,channel,coffe_type, size_type,tep_type)%>%
-  summarise(transactions=n(),sumtotprice=sum(totprice))
+group1 <- group_by(coffee,area_type,month_type,week_type,clock_type,channel,coffe_type,size_type,tep_type)%>%summarise(transactions=n(),sumtotprice=sum(totprice),meantotprice=mean(totprice),sumquant=sum(quant),meanquant=mean(quant))
 
 # Model 1
 lm1 <- lm(sumtotprice ~ area_type+month_type+week_type+clock_type+channel+coffe_type+size_type+tep_type, data = group1)
@@ -158,12 +158,12 @@ hist(residuals(lm1), main="Histogram of Residuals", xlab = "Residuals")
 qqnorm(residuals(lm1), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
 qqline(residuals(lm1))
 
-# studentized residuals
+# Studentized residuals
 group1$stuout3 <- rstandard(lm1)
 coffee2 <- subset(group1, group1$stuout3>(-3) & group1$stuout3<3)
 
 # Model 2
-lm2<-lm(sumtotprice ~ area_type+month_type+week_type+clock_type+channel+coffe_type+size_type+tep_type, data = coffee2)
+lm2 <- lm(sumtotprice ~ area_type+month_type+week_type+clock_type+channel+coffe_type+size_type+tep_type, data = coffee2)
 summary(lm2)
 par(mfrow=c(1,3))
 plot(fitted(lm2), residuals(lm2), main="Residual Plots", xlab="fitted", ylab="Residuals", cex=0.4, pch=19) 
@@ -182,7 +182,6 @@ hist(coffee2$logTotprice, xlab="logTotprice", main="Histogram of recipTotprice",
 
 lm3 <- lm(logTotprice ~ area_type+month_type+week_type+clock_type+channel+coffe_type+size_type+tep_type, data = coffee2)
 summary(lm3)
-
 par(mfrow=c(1,3))
 plot(fitted(lm3), residuals(lm3), main="Residual Plots", xlab="fitted", ylab="Residuals", cex=0.4, pch=19) 
 abline(h=0)
@@ -204,7 +203,7 @@ group1$logTotprice <- log(group1$sumtotprice)
 group1$area_type <- relevel(factor(group1$area_type), ref="臺北市")
 group1$channel <- relevel(factor(group1$channel), ref="seven")
 
-# 分不同channel (用group1分)
+# 分不同 channel
 groupseven <- subset(group1, (group1$channel=="seven"))
 groupfmart <- subset(group1, (group1$channel=="全家"))
 groupstarbucks <- subset(group1, (group1$channel=="星巴克"))
