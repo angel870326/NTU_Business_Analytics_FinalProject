@@ -191,7 +191,7 @@ qqnorm(residuals(lm3), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pc
 qqline(residuals(lm3))
 
 #---------------------------------------------------------------------#
-#                             Model Building                          #
+#                         Channel Model Building                      #
 #---------------------------------------------------------------------#
 # 將所有類別變數group在一起
 group1<- group_by(coffee, area_type,month_type,week_type,clock_type,channel,coffe_type, size_type,tep_type)%>%
@@ -206,9 +206,9 @@ group1$channel <- relevel(factor(group1$channel), ref="seven")
 
 # 分不同channel (用group1分)
 groupseven <- subset(group1, (group1$channel=="seven"))
-grouplouisa <- subset(group1, (group1$channel=="路易莎"))
 groupfmart <- subset(group1, (group1$channel=="全家"))
 groupstarbucks <- subset(group1, (group1$channel=="星巴克"))
+grouplouisa <- subset(group1, (group1$channel=="路易莎"))
 groupcama <- subset(group1, (group1$channel=="cama"))
 
 
