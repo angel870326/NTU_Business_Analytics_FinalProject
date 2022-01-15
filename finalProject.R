@@ -97,31 +97,31 @@ library(ggplot2)
 library(dplyr)
 # (1) 通路與單價的關係
 groupchuni <- group_by(coffee,channel,uniprice)%>%summarise(transactions=n(),sumtotprice=sum(totprice),meantotprice=mean(totprice),sumquant=sum(quant),meanquant=mean(quant))
-qplot(groupchuni$channel,groupchuni$uniprice, data=groupchuni,xlab="ccc",ylab="uniprice",main ="銷售價")+theme(plot.title=element_text(hjust=0.5))
 plot(groupchuni$channel,groupchuni$uniprice,ylab="Unit Price",xlab="Channel",main="通路與單價的關係")
-# (2) 不同咖啡的溫度（以不同銷售通路區分）
-grouptepcoff <- group_by(coffee,tep_type,coffe_type)%>%summarise(transactions=n(),sumtotprice=sum(totprice),meantotprice=mean(totprice),sumquant=sum(quant),meanquant=mean(quant))
-qplot(grouptepcoff$tep_type,grouptepcoff$sumtotprice,data=grouptepcoff,color=coffe_type,xlab="Temperature",ylab="Quantity",main="咖啡類型和溫度的關係")+theme(plot.title=element_text(hjust=0.5))
-# (3) 不同銷售月份（以不同銷售通路區分）
+
+## (A) 與銷售總額關係（以不同銷售通路區分） ##
+# (1) 不同咖啡溫度
+grouptep_type <- group_by(coffee,channel,tep_type)%>%summarise(transactions=n(),sumtotprice=sum(totprice),sumquant=sum(quant),meantotprice=mean(totprice))
+qplot(grouptep_type$tep_type,grouptep_type$sumtotprice,data=grouptep_type,color=channel,xlab="Temperature",ylab="Total Price",main="不同咖啡溫度的銷售總額")+theme(plot.title=element_text(hjust=0.5))
+# (2) 不同咖啡大小
+groupsize <- group_by(coffee,channel,size_type)%>%summarise(transactions=n(),sumtotprice=sum(totprice),meantotprice=mean(totprice),sumquant=sum(quant),meanquant=mean(quant))
+qplot(groupsize$size_type,groupsize$sumtotprice,data=groupsize,color=channel,xlab="Size Type",ylab="Total Price",main="不同咖啡大小的銷售總額")+theme(plot.title=element_text(hjust=0.5))
+# (3) 不同銷售月份
 groupmonth_type <-group_by(coffee,channel,month_type)%>%summarise(transactions=n(),sumtotprice=sum(totprice),sumquant=sum(quant),meantotprice=mean(totprice))
-qplot(groupmonth_type$month_type,groupmonth_type$sumquant,data=groupmonth_type,color=channel,xlab="Month",ylab="Quantity",main="不同月份的銷售量")+theme(plot.title=element_text(hjust=0.5))
 qplot(groupmonth_type$month_type,groupmonth_type$sumtotprice,data=groupmonth_type,color=channel,xlab="Month",ylab="Total Price",main="不同月份的銷售總額")+theme(plot.title=element_text(hjust=0.5))
-# (4) 平日或假日（以不同銷售通路區分）
+# (4) 平日或假日
 groupweek <- group_by(coffee,channel,week_type)%>%summarise(transactions=n(),sumtotprice=sum(totprice),meantotprice=mean(totprice),sumquant=sum(quant),meanquant=mean(quant))
-qplot(groupweek$week_type,groupweek$sumquant,data=groupweek,color=channel,xlab="Week Type",ylab="Quantity",main="平日、假日的銷售量")+theme(plot.title=element_text(hjust=0.5))
 qplot(groupweek$week_type,groupweek$sumtotprice,data=groupweek,color=channel,xlab="Week Type",ylab="Total Price",main="平日、假日的銷售總額")+theme(plot.title=element_text(hjust=0.5))
-# (5) 不同咖啡類型（以不同銷售通路區分）
+# (5) 不同咖啡類型
 groupcoffe_type <-group_by(coffee,channel,coffe_type)%>%summarise(transactions=n(),sumtotprice=sum(totprice),sumquant=sum(quant),meantotprice=mean(totprice))
-qplot(groupcoffe_type$coffe_type,groupcoffe_type$sumquant,data=groupcoffe_type,color=channel,xlab="Coffee Type",ylab="Quantity",main="不同咖啡類型的銷售量")+theme(plot.title=element_text(hjust=0.5))
 qplot(groupcoffe_type$coffe_type,groupcoffe_type$sumtotprice,data=groupcoffe_type,color=channel,xlab="Coffee Type",ylab="Total Price",main="不同咖啡類型的銷售總額")+theme(plot.title=element_text(hjust=0.5))
-# (6) 不同時點（以不同銷售通路區分）
+# (6) 不同時點（早、中、晚）
 groupclock_type <- group_by(coffee,channel,clock_type)%>%summarise(transactions=n(),sumtotprice=sum(totprice),sumquant=sum(quant),meantotprice=mean(totprice))
 qplot(groupclock_type$clock_type,groupclock_type$sumtotprice,data=groupclock_type,color=channel,xlab="Clock",ylab="Total Price",main="不同時點的銷售總額")+theme(plot.title=element_text(hjust=0.5))
-qplot(groupclock_type$clock_type,groupclock_type$sumquant,data=groupclock_type,color=channel,xlab="Clock",ylab="Quantity",main="不同時點的銷售量")+theme(plot.title=element_text(hjust=0.5))
-# (7) 不同地區（以不同銷售通路區分）
+# (7) 不同地區
 grouparea <- group_by(coffee,channel,area_type)%>%summarise(transactions=n(),sumtotprice=sum(totprice),meantotprice=mean(totprice),sumquant=sum(quant),meanquant=mean(quant))
 qplot(grouparea$area_type,grouparea$sumtotprice,data=grouparea,color=channel,xlab="Area",ylab="Totol Price",main="地區與總銷售額關係")+theme(plot.title=element_text(hjust=0.5),axis.text.x=element_text(angle=270,vjust=0.5))
-# (8) 單價與銷售總額關係（以不同銷售通路區分）
+# (8) 不同單價
 groupuni <- group_by(coffee,channel,uniprice)%>%summarise(transactions=n(),sumtotprice=sum(totprice),meantotprice=mean(totprice),sumquant=sum(quant),meanquant=mean(quant))
 qplot(groupuni$uniprice,groupuni$sumtotprice,data=groupuni,color=channel,xlab="Unit Price",ylab="Totol Price",main="單價與總銷售額關係")+theme(plot.title=element_text(hjust=0.5))
 
@@ -140,6 +140,8 @@ grouptepsize$size_type=factor(grouptepsize$size_type,levels=c("小","中","大",
 
 
 # 不同咖啡的大小（以不同銷售通路區分）
+grouptepcoff <- group_by(coffee,tep_type,coffe_type)%>%summarise(transactions=n(),sumtotprice=sum(totprice),meantotprice=mean(totprice),sumquant=sum(quant),meanquant=mean(quant))
+qplot(grouptepcoff$tep_type,grouptepcoff$sumtotprice,data=grouptepcoff,color=coffe_type,xlab="Temperature",ylab="Quantity",main="咖啡類型和溫度的關係")+theme(plot.title=element_text(hjust=0.5))
 
 
 
@@ -147,13 +149,6 @@ grouptepsize$size_type=factor(grouptepsize$size_type,levels=c("小","中","大",
 
 
 
-groupsize <- group_by(coffee,channel,size_type)%>%summarise(transactions=n(),sumtotprice=sum(totprice),meantotprice=mean(totprice),sumquant=sum(quant),meanquant=mean(quant))
-qplot(groupsize$size_type,groupsize$sumquant,data=groupsize,color=channel,xlab="Size Type",ylab="Quantity",main="不同咖啡大小的銷售量")+theme(plot.title=element_text(hjust=0.5))
-qplot(groupsize$size_type,groupsize$sumtotprice,data=groupsize,color=channel,xlab="Size Type",ylab="Total Price",main="不同咖啡大小的銷售總額")+theme(plot.title=element_text(hjust=0.5))
-
-grouptep_type <- group_by(coffee,channel,tep_type)%>%summarise(transactions=n(),sumtotprice=sum(totprice),sumquant=sum(quant),meantotprice=mean(totprice))
-qplot(grouptep_type$tep_type,grouptep_type$sumquant,data=grouptep_type,color=channel,xlab="Temperature",ylab="Quantity",main="不同咖啡溫度的銷售量")+theme(plot.title=element_text(hjust=0.5))
-qplot(grouptep_type$tep_type,grouptep_type$sumtotprice,data=grouptep_type,color=channel,xlab="Temperature",ylab="Total Price",main="不同咖啡溫度的銷售總額")+theme(plot.title=element_text(hjust=0.5))
 
 
 #---------------------------------------------------------------------#
