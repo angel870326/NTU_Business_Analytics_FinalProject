@@ -125,31 +125,16 @@ qplot(grouparea$area_type,grouparea$sumtotprice,data=grouparea,color=channel,xla
 groupuni <- group_by(coffee,channel,uniprice)%>%summarise(transactions=n(),sumtotprice=sum(totprice),meantotprice=mean(totprice),sumquant=sum(quant),meanquant=mean(quant))
 qplot(groupuni$uniprice,groupuni$sumtotprice,data=groupuni,color=channel,xlab="Unit Price",ylab="Totol Price",main="單價與總銷售額關係")+theme(plot.title=element_text(hjust=0.5))
 
-
-# (B) 以不同時點區分
-
-# (1) 溫度與總銷售總額關係（以不同時點區分）
+## (B) 以不同時點區分 ##
+# (1) 溫度與總銷售總額關係
 grouptepclock <- group_by(coffee,clock_type,tep_type)%>%summarise(transactions=n(),sumtotprice=sum(totprice),meantotprice=mean(totprice),sumquant=sum(quant),meanquant=mean(quant))
 qplot(grouptepclock$tep_type,grouptepclock$sumtotprice,data=grouptepclock,color=clock_type,xlab="Temperature",ylab="Totol Price",main ="溫度和時間的關係")+theme(plot.title=element_text(hjust=0.5))
 
-# (C) 以不同咖啡大小區分
-# (1) 溫度與總銷售量關係（以不同咖啡大小區分）
+## (C) 以不同咖啡大小區分 ##
+# (1) 溫度與總銷售量關係
 grouptepsize <- group_by(coffee,size_type,tep_type)%>%summarise(transactions=n(),sumtotprice=sum(totprice),meantotprice=mean(totprice),sumquant=sum(quant),meanquant=mean(quant))
 gplot(grouptepsize,aes(x=factor(grouptepsize$size_type),y=grouptepsize$sumquant,colour=tep_type,group=grouptepsize$tep_type))+geom_line(size=1)+labs(x="Size Type",y="Quantity",title="溫度和大小的關係")+theme(plot.title=element_text(hjust=0.5)) 
 grouptepsize$size_type=factor(grouptepsize$size_type,levels=c("小","中","大","特大"))
-
-
-# 不同咖啡的大小（以不同銷售通路區分）
-grouptepcoff <- group_by(coffee,tep_type,coffe_type)%>%summarise(transactions=n(),sumtotprice=sum(totprice),meantotprice=mean(totprice),sumquant=sum(quant),meanquant=mean(quant))
-qplot(grouptepcoff$tep_type,grouptepcoff$sumtotprice,data=grouptepcoff,color=coffe_type,xlab="Temperature",ylab="Quantity",main="咖啡類型和溫度的關係")+theme(plot.title=element_text(hjust=0.5))
-
-
-
-
-
-
-
-
 
 #---------------------------------------------------------------------#
 #                             Model Building                          #
