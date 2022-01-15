@@ -99,7 +99,7 @@ library(dplyr)
 groupchuni <- group_by(coffee,channel,uniprice)%>%summarise(transactions=n(),sumtotprice=sum(totprice),meantotprice=mean(totprice),sumquant=sum(quant),meanquant=mean(quant))
 plot(groupchuni$channel,groupchuni$uniprice,ylab="Unit Price",xlab="Channel",main="通路與單價的關係")
 
-## (A) 與銷售總額關係（以不同銷售通路區分） ##
+#-----------------(A) 與銷售總額的關係（以不同銷售通路區分）----------------#
 # (1) 不同咖啡溫度
 grouptep_type <- group_by(coffee,channel,tep_type)%>%summarise(transactions=n(),sumtotprice=sum(totprice),sumquant=sum(quant),meantotprice=mean(totprice))
 qplot(grouptep_type$tep_type,grouptep_type$sumtotprice,data=grouptep_type,color=channel,xlab="Temperature",ylab="Total Price",main="不同咖啡溫度的銷售總額")+theme(plot.title=element_text(hjust=0.5))
@@ -125,12 +125,12 @@ qplot(grouparea$area_type,grouparea$sumtotprice,data=grouparea,color=channel,xla
 groupuni <- group_by(coffee,channel,uniprice)%>%summarise(transactions=n(),sumtotprice=sum(totprice),meantotprice=mean(totprice),sumquant=sum(quant),meanquant=mean(quant))
 qplot(groupuni$uniprice,groupuni$sumtotprice,data=groupuni,color=channel,xlab="Unit Price",ylab="Totol Price",main="單價與總銷售額關係")+theme(plot.title=element_text(hjust=0.5))
 
-## (B) 以不同時點區分 ##
+#-------------------(B) 與銷售總額的關係（以不同時點區分）-----------------#
 # (1) 溫度與總銷售總額關係
 grouptepclock <- group_by(coffee,clock_type,tep_type)%>%summarise(transactions=n(),sumtotprice=sum(totprice),meantotprice=mean(totprice),sumquant=sum(quant),meanquant=mean(quant))
 qplot(grouptepclock$tep_type,grouptepclock$sumtotprice,data=grouptepclock,color=clock_type,xlab="Temperature",ylab="Totol Price",main ="溫度和時間的關係")+theme(plot.title=element_text(hjust=0.5))
 
-## (C) 以不同咖啡大小區分 ##
+#------------------(C) 與銷售量的關係（以不同咖啡大小區分）-----------------#
 # (1) 溫度與總銷售量關係
 grouptepsize <- group_by(coffee,size_type,tep_type)%>%summarise(transactions=n(),sumtotprice=sum(totprice),meantotprice=mean(totprice),sumquant=sum(quant),meanquant=mean(quant))
 gplot(grouptepsize,aes(x=factor(grouptepsize$size_type),y=grouptepsize$sumquant,colour=tep_type,group=grouptepsize$tep_type))+geom_line(size=1)+labs(x="Size Type",y="Quantity",title="溫度和大小的關係")+theme(plot.title=element_text(hjust=0.5)) 
@@ -200,7 +200,7 @@ groupstarbucks <- subset(group1, (group1$channel=="星巴克"))
 grouplouisa <- subset(group1, (group1$channel=="路易莎"))
 groupcama <- subset(group1, (group1$channel=="cama"))
 
-#---------------------------------7-11---------------------------------#
+#--------------------------------7-11---------------------------------#
 # Model
 lmseven <- lm(logTotprice ~ area_type + month_type + week_type + clock_type + coffe_type + size_type + tep_type, data = groupseven)
 summary(groupseven)
@@ -227,7 +227,7 @@ hist(residuals(lmseven2), main="Histogram of Residuals", xlab="Residuals")
 qqnorm(residuals(lmseven2), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
 qqline(residuals(lmseven2))
 
-#----------------------------------全家---------------------------------#
+#---------------------------------全家---------------------------------#
 # Model
 lmfmart <- lm(logTotprice ~ area_type + month_type + week_type + clock_type + coffe_type + size_type + tep_type, data = groupfmart)
 summary(lmfmart)
@@ -254,7 +254,7 @@ hist(residuals(lmfmart2), main="Histogram of Residuals", xlab="Residuals")
 qqnorm(residuals(lmfmart2), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
 qqline(residuals(lmfmart2))
 
-#---------------------------------星巴克--------------------------------#
+#--------------------------------星巴克--------------------------------#
 # Model
 lmstar<-lm(logTotprice ~ area_type + month_type + week_type + clock_type + coffe_type + size_type + tep_type, data = groupstarbucks)
 summary(lmstar)
@@ -281,7 +281,7 @@ hist(residuals(lmstar2), main="Histogram of Residuals", xlab="Residuals")
 qqnorm(residuals(lmstar2), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
 qqline(residuals(lmstar2))
 
-#---------------------------------路易莎--------------------------------#
+#--------------------------------路易莎--------------------------------#
 # Model
 lmlouisa<-lm(logTotprice ~ area_type + month_type + week_type + clock_type + coffe_type + size_type + tep_type, data = grouplouisa)
 summary(lmlouisa)
@@ -308,7 +308,7 @@ hist(residuals(lmlouisa2), main="Histogram of Residuals", xlab="Residuals")
 qqnorm(residuals(lmlouisa2), main="QQ-plot of Residuals",ylab="Residuals", cex=0.4, pch=19)
 qqline(residuals(lmlouisa2))
 
-#---------------------------------Cama--------------------------------#
+#--------------------------------Cama---------------------------------#
 # Model
 lmcama<-lm(logTotprice ~ area_type + month_type + week_type + clock_type + coffe_type + size_type + tep_type, data = groupcama)
 summary(lmcama)
