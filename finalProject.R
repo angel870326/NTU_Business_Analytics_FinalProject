@@ -99,7 +99,7 @@ library(dplyr)
 groupchuni <- group_by(coffee,channel,uniprice)%>%summarise(transactions=n(),sumtotprice=sum(totprice),meantotprice=mean(totprice),sumquant=sum(quant),meanquant=mean(quant))
 plot(groupchuni$channel,groupchuni$uniprice,ylab="Unit Price",xlab="Channel",main="通路與單價的關係")
 
-#-----------------(A) 與銷售總額的關係（以不同銷售通路區分）----------------#
+#-----------------1. 與銷售總額的關係（以不同銷售通路區分）-----------------#
 # (1) 不同咖啡溫度
 grouptep_type <- group_by(coffee,channel,tep_type)%>%summarise(transactions=n(),sumtotprice=sum(totprice),sumquant=sum(quant),meantotprice=mean(totprice))
 qplot(grouptep_type$tep_type,grouptep_type$sumtotprice,data=grouptep_type,color=channel,xlab="Temperature",ylab="Total Price",main="不同咖啡溫度的銷售總額")+theme(plot.title=element_text(hjust=0.5))
@@ -125,12 +125,12 @@ qplot(grouparea$area_type,grouparea$sumtotprice,data=grouparea,color=channel,xla
 groupuni <- group_by(coffee,channel,uniprice)%>%summarise(transactions=n(),sumtotprice=sum(totprice),meantotprice=mean(totprice),sumquant=sum(quant),meanquant=mean(quant))
 qplot(groupuni$uniprice,groupuni$sumtotprice,data=groupuni,color=channel,xlab="Unit Price",ylab="Totol Price",main="單價與總銷售額關係")+theme(plot.title=element_text(hjust=0.5))
 
-#-------------------(B) 與銷售總額的關係（以不同時點區分）-----------------#
+#-------------------2. 與銷售總額的關係（以不同時點區分）------------------#
 # (1) 溫度與總銷售總額關係
 grouptepclock <- group_by(coffee,clock_type,tep_type)%>%summarise(transactions=n(),sumtotprice=sum(totprice),meantotprice=mean(totprice),sumquant=sum(quant),meanquant=mean(quant))
 qplot(grouptepclock$tep_type,grouptepclock$sumtotprice,data=grouptepclock,color=clock_type,xlab="Temperature",ylab="Totol Price",main ="溫度和時間的關係")+theme(plot.title=element_text(hjust=0.5))
 
-#------------------(C) 與銷售量的關係（以不同咖啡大小區分）-----------------#
+#------------------3. 與銷售量的關係（以不同咖啡大小區分）------------------#
 # (1) 溫度與總銷售量關係
 grouptepsize <- group_by(coffee,size_type,tep_type)%>%summarise(transactions=n(),sumtotprice=sum(totprice),meantotprice=mean(totprice),sumquant=sum(quant),meanquant=mean(quant))
 gplot(grouptepsize,aes(x=factor(grouptepsize$size_type),y=grouptepsize$sumquant,colour=tep_type,group=grouptepsize$tep_type))+geom_line(size=1)+labs(x="Size Type",y="Quantity",title="溫度和大小的關係")+theme(plot.title=element_text(hjust=0.5)) 
