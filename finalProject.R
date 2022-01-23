@@ -65,12 +65,12 @@ write.csv(coffee,file="all_merge5.csv",row.names = FALSE)
 #---------------------------------------------------------------------#
 all_merge <- read.csv("all_merge5.csv")
 library(dplyr)
-all_merge <- distinct(all_merge)  # 刪除重複的 observaitons
+all_merge <- distinct(all_merge)  # 刪除重複的 observations
 all_merge <- subset(all_merge, select = -c(datetime_UTC_8, deviceid, invo_idx, id, county_district, names))  # 刪除部分變數
 # 取出 special_type 為 "normal" 的 observations
 coffee <- subset(all_merge, (all_merge$special_type=="normal"))
 coffee <- subset(coffee, select = -special_type )
-# 刪除 uniprice > 200 的 observaitons
+# 刪除 uniprice > 200 的 observations
 coffee <- subset(coffee, (coffee$uniprice<=200))
 saveRDS(coffee, file = "coffee.rds")
 # 由於星巴克未標注冷熱的飲品皆為熱飲（冷飲才會額外標注），因此將星巴克 tep_type 為 "non" 者改為 "熱"
